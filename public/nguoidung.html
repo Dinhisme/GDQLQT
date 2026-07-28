@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VănBản Pro – Hệ Thống Quản Lý</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- DataTables -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-badge">
+                <div class="logo-icon">📋</div>
+                <div>
+                    <div class="logo-text">BVPSTPCT</div>
+                    <div class="logo-sub">Quản Lý Quy Trình</div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Tổng Quan</div>
+            <a class="nav-item " href="/index.html">
+                <span class="nav-icon">🏠</span> Bảng Điều Khiển
+            </a>
+
+            <div class="nav-section-label">Quản Lý</div>
+            <a class="nav-item" href="/qlqt.html">
+                <span class="nav-icon">📄</span> Quy trình
+                <span class="nav-badge">48</span>
+            </a>
+            <a class="nav-item " href="/qlch.html">
+                <span class="nav-icon">❓</span> Câu Hỏi
+                <span class="nav-badge">126</span>
+            </a>
+            <a class="nav-item" href="/qlbkt.html">
+                <span class="nav-icon">📝</span> Bài Kiểm Tra
+                <span class="nav-badge">18</span>
+            </a>
+
+            <div class="nav-section-label">Hệ Thống</div>
+            <a class="nav-item active" href="/nguoidung.html">
+                <span class="nav-icon">👥</span> Người Dùng
+            </a>
+            <a class="nav-item" href="/khoaphong.html">
+                <span class="nav-icon">🏢</span> Khoa / Phòng
+            </a>
+            <a class="nav-item" href="/settings.html">
+                <span class="nav-icon">⚙️</span> Cài Đặt
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar">HI</div>
+                <div class="user-info">
+                    <div class="user-name">Phùng Quốc Vinh</div>
+                    <div class="user-role">Quản trị viên</div>
+                </div>
+                <span style="font-size:14px; opacity:.5;">⋯</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- HEADER -->
+        <header class="header">
+            <button class="burger" onclick="toggleSidebar()">☰</button>
+            <div>
+                <div class="page-title" id="pageTitle">Bảng Điều Khiển</div>
+                <div class="breadcrumb" id="breadcrumb">Tổng quan hệ thống</div>
+            </div>
+            <div class="header-actions">
+                <div class="user-card">
+                    <div class="avatar" style="color: black !important;">HI</div>
+                    <div class="user-info">
+                        <div class="user-name" style="color: black !important;">Phùng Quốc Vinh</div>
+                        <div class="user-role" style="color: black !important;">Quản trị viên</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="content">
+
+            <!-- HEADER -->
+            <div class="section-header">
+                <div>
+                    <div class="section-title">Quản Lý Người Dùng</div>
+                    <div class="section-sub">Hệ thống / Người dùng · 142 tài khoản</div>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('addUserModal')">+ Thêm Người Dùng</button>
+            </div>
+
+            <!-- STAT CARDS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">👥</div>
+                    <div class="stat-value">142</div>
+                    <div class="stat-label">Tổng người dùng</div>
+                    <div class="stat-delta delta-up">↑ 23 trong tháng này</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon teal">✅</div>
+                    <div class="stat-value">128</div>
+                    <div class="stat-label">Đang hoạt động</div>
+                    <div class="stat-delta delta-up">↑ 90% tổng số</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon indigo">🔑</div>
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">Quản trị viên</div>
+                    <div class="stat-delta delta-up">Ổn định</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon cyan">⏳</div>
+                    <div class="stat-value">14</div>
+                    <div class="stat-label">Chờ kích hoạt</div>
+                    <div class="stat-delta delta-down">↓ 5 so với tuần trước</div>
+                </div>
+            </div>
+
+            <!-- FILTER TABS -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="setTab(this)">Tất Cả (142)</button>
+                <button class="filter-tab" onclick="setTab(this)">Quản Trị Viên (6)</button>
+                <button class="filter-tab" onclick="setTab(this)">Quản Lý (18)</button>
+                <button class="filter-tab" onclick="setTab(this)">Nhân Viên (118)</button>
+                <button class="filter-tab" onclick="setTab(this)">Vô Hiệu Hóa (14)</button>
+            </div>
+
+            <!-- TABLE -->
+            <div class="table-card">
+                <table id="tbl-users" class="display stripe" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Người Dùng</th>
+                            <th>Khoa / Phòng</th>
+                            <th>Vai Trò</th>
+                            <th>Lần Đăng Nhập Cuối</th>
+                            <th>Trạng Thái</th>
+                            <th>Hoạt Động</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">AT</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Admin Tuấn</div>
+                                        <div class="email">tuan.admin@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Ban Giám Đốc</td>
+                            <td><span class="badge badge-purple">Quản trị viên</span></td>
+                            <td>12/06/2026 08:42</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">NA</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Nguyễn Văn A</div>
+                                        <div class="email">vana.nguyen@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng Kỹ Thuật</td>
+                            <td><span class="badge badge-blue">Quản lý</span></td>
+                            <td>12/06/2026 07:15</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">TB</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Trần Thị B</div>
+                                        <div class="email">thib.tran@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng IT</td>
+                            <td><span class="badge badge-blue">Quản lý</span></td>
+                            <td>11/06/2026 16:30</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">LC</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Lê Văn C</div>
+                                        <div class="email">vanc.le@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng Kỹ Thuật</td>
+                            <td><span class="badge badge-blue">Nhân viên</span></td>
+                            <td>12/06/2026 09:02</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">PD</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Phạm Thị D</div>
+                                        <div class="email">thid.pham@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng QC</td>
+                            <td><span class="badge badge-blue">Nhân viên</span></td>
+                            <td>10/06/2026 14:20</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">HE</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Hoàng Văn E</div>
+                                        <div class="email">vane.hoang@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng Hành Chính</td>
+                            <td><span class="badge badge-blue">Nhân viên</span></td>
+                            <td>09/06/2026 11:05</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">NF</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Nguyễn Thị F</div>
+                                        <div class="email">thif.nguyen@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng Nhân Sự</td>
+                            <td><span class="badge badge-blue">Quản lý</span></td>
+                            <td>12/06/2026 08:00</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">TG</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Trần Văn G</div>
+                                        <div class="email">vang.tran@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng IT</td>
+                            <td><span class="badge badge-blue">Nhân viên</span></td>
+                            <td>08/06/2026 17:48</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">VH</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Vũ Thị H</div>
+                                        <div class="email">thih.vu@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng Kinh Doanh</td>
+                            <td><span class="badge badge-blue">Nhân viên</span></td>
+                            <td>05/06/2026 10:11</td>
+                            <td><span class="badge badge-yellow">Chờ kích hoạt</span></td>
+                            <td><label class="switch"><input type="checkbox"><span class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">DK</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Đặng Văn K</div>
+                                        <div class="email">vank.dang@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng Logistics</td>
+                            <td><span class="badge badge-blue">Nhân viên</span></td>
+                            <td>28/05/2026 09:32</td>
+                            <td><span class="badge badge-red">Vô hiệu hóa</span></td>
+                            <td><label class="switch"><input type="checkbox"><span class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">BL</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Bùi Thị L</div>
+                                        <div class="email">thil.bui@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng Kế Toán</td>
+                            <td><span class="badge badge-blue">Nhân viên</span></td>
+                            <td>11/06/2026 13:55</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">PM</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Phan Văn M</div>
+                                        <div class="email">vanm.phan@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng Kinh Doanh</td>
+                            <td><span class="badge badge-purple">Quản trị viên</span></td>
+                            <td>12/06/2026 06:50</td>
+                            <td><span class="badge badge-green">Hoạt động</span></td>
+                            <td><label class="switch"><input type="checkbox" checked><span
+                                        class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar">DN</div>
+                                    <div class="user-cell-info">
+                                        <div class="name">Đỗ Thị N</div>
+                                        <div class="email">thin.do@vanbanpro.vn</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Phòng Nhân Sự</td>
+                            <td><span class="badge badge-blue">Nhân viên</span></td>
+                            <td>02/06/2026 15:40</td>
+                            <td><span class="badge badge-yellow">Chờ kích hoạt</span></td>
+                            <td><label class="switch"><input type="checkbox"><span class="slider"></span></label></td>
+                            <td>
+                                <div class="row-actions">
+                                    <div class="act-btn">✏️</div>
+                                    <div class="act-btn del">🗑</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /content -->
+
+
+        <!-- ADD USER MODAL -->
+        <div class="modal-overlay" id="addUserModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Thêm Người Dùng Mới</div>
+                    <div class="modal-close" onclick="closeModal('addUserModal')">×</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Họ và Tên *</label>
+                        <input type="text" class="form-input" placeholder="VD: Nguyễn Văn A">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-input" placeholder="email@vanbanpro.vn">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Khoa / Phòng</label>
+                        <select class="form-input">
+                            <option>Phòng Kỹ Thuật</option>
+                            <option>Phòng IT</option>
+                            <option>Phòng Nhân Sự</option>
+                            <option>Phòng Hành Chính</option>
+                            <option>Phòng Kinh Doanh</option>
+                            <option>Phòng QC</option>
+                            <option>Phòng Logistics</option>
+                            <option>Phòng Kế Toán</option>
+                            <option>Ban Giám Đốc</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vai Trò</label>
+                        <select class="form-input">
+                            <option>Nhân viên</option>
+                            <option>Quản lý</option>
+                            <option>Quản trị viên</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số Điện Thoại</label>
+                    <input type="text" class="form-input" placeholder="VD: 0901 234 567">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mật Khẩu Tạm Thời</label>
+                    <input type="password" class="form-input" placeholder="Tự động tạo nếu để trống">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" onclick="closeModal('addUserModal')">Hủy</button>
+                    <button class="btn btn-primary" onclick="closeModal('addUserModal')">Lưu Người Dùng</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- /main -->
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-nav" id="mobileNav">
+        <div class="mob-nav-item active" id="mob-dashboard" onclick="mobileNav('dashboard', this)">
+            <span class="mob-icon">🏠</span>
+            <span>Tổng Quan</span>
+        </div>
+        <div class="mob-nav-item" id="mob-documents" onclick="mobileNav('documents', this)">
+            <span class="mob-icon">📄</span>
+            <span>Quy trình</span>
+        </div>
+        <div class="mob-nav-item" id="mob-questions" onclick="mobileNav('questions', this)">
+            <span class="mob-icon">❓</span>
+            <span>Câu Hỏi</span>
+        </div>
+        <div class="mob-nav-item" id="mob-tests" onclick="mobileNav('tests', this)">
+            <span class="mob-icon">📝</span>
+            <span>Kiểm Tra</span>
+        </div>
+        <div class="mob-nav-item" id="mob-results" onclick="mobileNav('results', this)">
+            <span class="mob-icon">📊</span>
+            <span>Kết Quả</span>
+        </div>
+    </nav>
+
+    <script>
+        const pageMap = {
+            dashboard: { title: 'Bảng Điều Khiển', sub: 'Tổng quan hệ thống' },
+            documents: { title: 'Quản Lý Quy trình', sub: 'Quản lý / Quy trình' },
+            questions: { title: 'Quản Lý Câu Hỏi', sub: 'Quản lý / Câu hỏi' },
+            tests: { title: 'Quản Lý Bài Kiểm Tra', sub: 'Quản lý / Bài kiểm tra' },
+            categories: { title: 'Danh Mục', sub: 'Quản lý / Danh mục' },
+            results: { title: 'Kết Quả Thi', sub: 'Kết quả / Thống kê' },
+            reports: { title: 'Báo Cáo', sub: 'Kết quả / Báo cáo' },
+            users: { title: 'Người Dùng', sub: 'Hệ thống / Người dùng' },
+            settings: { title: 'Cài Đặt', sub: 'Hệ thống / Cài đặt' },
+        };
+
+        function mobileNav(page, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.mob-nav-item').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            el.classList.add('active');
+            const info = pageMap[page];
+            document.getElementById('pageTitle').textContent = info.title;
+            document.getElementById('breadcrumb').textContent = info.sub;
+            // sync sidebar highlight
+            document.querySelectorAll('.nav-item').forEach(n => {
+                if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + page + "'")) {
+                    n.classList.add('active');
+                }
+            });
+            // scroll content to top
+            document.querySelector('.content').scrollTop = 0;
+            window.scrollTo(0, 0);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
+        }
+
+    </script>
+
+    <!-- jQuery + DataTables -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        /* ── DataTables shared config ── */
+        const dtDefaults = {
+            language: {
+                search: '',
+                searchPlaceholder: ' Tìm kiếm...',
+                lengthMenu: 'Hiển thị _MENU_ dòng',
+                info: 'Hiển thị _START_–_END_ / _TOTAL_ bản ghi',
+                infoEmpty: 'Không có bản ghi',
+                infoFiltered: '(lọc từ _MAX_ bản ghi)',
+                zeroRecords: 'Không tìm thấy kết quả phù hợp',
+                emptyTable: 'Không có dữ liệu',
+                paginate: {
+                    first: '«',
+                    previous: '‹',
+                    next: '›',
+                    last: '»'
+                }
+            },
+            dom:
+                '<"dataTables_top-bar"lf>' +
+                'rt' +
+                '<"dataTables_bottom-bar"ip>',
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50],
+            responsive: true,
+            autoWidth: false,
+            stateSave: false,
+            drawCallback: function () {
+                // Re-apply badge HTML after each draw (DataTables doesn't escape HTML by default)
+            }
+        };
+
+        /* Init users table */
+        const dtDashboard = $('#tbl-users').DataTable($.extend(true, {}, dtDefaults, {
+            order: [[3, 'desc']],          // sort by date desc
+            columnDefs: [
+                { orderable: false, targets: [1, 4] }   // badge columns not sortable
+            ]
+        }));
+
+        /* Init documents table */
+        /* Re-init DataTables when switching to a tab that was hidden
+           (DataTables can miscalculate column widths on hidden tabs) */
+        $(document).on('click', '.nav-item, .mob-nav-item', function () {
+            setTimeout(function () {
+                $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+            }, 50);
+        });
+
+        function setTab(el) {
+            el.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+        });
+    </script>
+</body>
+
+</html>

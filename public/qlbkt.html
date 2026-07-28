@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VănBản Pro – Hệ Thống Quản Lý</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- DataTables -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-badge">
+                <div class="logo-icon">📋</div>
+                <div>
+                    <div class="logo-text">BVPSTPCT</div>
+                    <div class="logo-sub">Quản Lý Quy Trình</div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Tổng Quan</div>
+            <a class="nav-item " href="/index.html">
+                <span class="nav-icon">🏠</span> Bảng Điều Khiển
+            </a>
+
+            <div class="nav-section-label">Quản Lý</div>
+            <a class="nav-item" href="/qlqt.html">
+                <span class="nav-icon">📄</span> Quy trình
+                <span class="nav-badge">48</span>
+            </a>
+            <a class="nav-item " href="/qlch.html">
+                <span class="nav-icon">❓</span> Câu Hỏi
+                <span class="nav-badge">126</span>
+            </a>
+            <a class="nav-item active" href="/qlbkt.html">
+                <span class="nav-icon">📝</span> Bài Kiểm Tra
+                <span class="nav-badge">18</span>
+            </a>
+
+            <div class="nav-section-label">Hệ Thống</div>
+            <a class="nav-item" href="/nguoidung.html">
+                <span class="nav-icon">👥</span> Người Dùng
+            </a>
+            <a class="nav-item" href="/khoaphong.html">
+                <span class="nav-icon">🏢</span> Khoa / Phòng
+            </a>
+            <a class="nav-item" href="/settings.html">
+                <span class="nav-icon">⚙️</span> Cài Đặt
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar">AT</div>
+                <div class="user-info">
+                    <div class="user-name">Phùng Quốc Vinh</div>
+                    <div class="user-role">Quản trị viên</div>
+                </div>
+                <span style="font-size:14px; opacity:.5;">⋯</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- HEADER -->
+        <header class="header">
+            <button class="burger" onclick="toggleSidebar()">☰</button>
+            <div>
+                <div class="page-title" id="pageTitle">Bảng Điều Khiển</div>
+                <div class="breadcrumb" id="breadcrumb">Tổng quan hệ thống</div>
+            </div>
+            <div class="header-actions">
+                <div class="user-card">
+                    <div class="avatar" style="color: black !important;">AT</div>
+                    <div class="user-info">
+                        <div class="user-name" style="color: black !important;">Phùng Quốc Vinh</div>
+                        <div class="user-role" style="color: black !important;">Quản trị viên</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="content">
+
+            <!-- TESTS PAGE -->
+            <div class="page" id="page-tests">
+                <div class="section-header" style="margin-bottom:20px">
+                    <div>
+                        <div class="section-title">Quản Lý Bài Kiểm Tra</div>
+                        <div class="section-sub">18 bài kiểm tra đang hoạt động</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('addTestModal')">+ Tạo Bài Kiểm Tra</button>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="setTab(this)">Tất Cả (18)</button>
+                    <button class="filter-tab" onclick="setTab(this)">Đang Mở (12)</button>
+                    <button class="filter-tab" onclick="setTab(this)">Đã Đóng (4)</button>
+                    <button class="filter-tab" onclick="setTab(this)">Nháp (2)</button>
+                </div>
+
+                <div class="test-grid">
+                    <div class="test-card">
+                        <div class="test-card-title">Kiểm Tra Nghiệp Vụ Q1 2026</div>
+                        <div class="test-card-desc">Đánh giá năng lực nhân viên theo tiêu chuẩn ISO 9001 và quy định nội
+                            bộ công ty</div>
+                        <div class="test-meta-row">
+                            <div class="test-meta-item">❓ <span>40 câu</span></div>
+                            <div class="test-meta-item">⏱ <span>60 phút</span></div>
+                            <div class="test-meta-item">🎯 <span>Điểm đạt: 70%</span></div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:78%"></div>
+                        </div>
+                        <div style="font-size:11px;color:#2563eb;opacity:.6;margin-top:4px;">78/100 người đã thi</div>
+                        <div class="test-card-footer">
+                            <span class="badge badge-green">Đang Mở</span>
+                            <div class="row-actions">
+                                <div class="act-btn">👁</div>
+                                <div class="act-btn">✏️</div>
+                                <div class="act-btn del">🗑</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="test-card">
+                        <div class="test-card-title">An Toàn Lao Động – Cơ Bản</div>
+                        <div class="test-card-desc">Kiến thức cơ bản về an toàn lao động bắt buộc cho toàn thể nhân viên
+                            mới</div>
+                        <div class="test-meta-row">
+                            <div class="test-meta-item">❓ <span>30 câu</span></div>
+                            <div class="test-meta-item">⏱ <span>45 phút</span></div>
+                            <div class="test-meta-item">🎯 <span>Điểm đạt: 80%</span></div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:100%"></div>
+                        </div>
+                        <div style="font-size:11px;color:#2563eb;opacity:.6;margin-top:4px;">45/45 người đã thi · Hoàn
+                            thành</div>
+                        <div class="test-card-footer">
+                            <span class="badge badge-blue">Đã Đóng</span>
+                            <div class="row-actions">
+                                <div class="act-btn">👁</div>
+                                <div class="act-btn">✏️</div>
+                                <div class="act-btn del">🗑</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="test-card">
+                        <div class="test-card-title">Kỹ Năng Vận Hành Thiết Bị</div>
+                        <div class="test-card-desc">Đánh giá kỹ năng vận hành thiết bị sản xuất theo quy trình chuẩn
+                        </div>
+                        <div class="test-meta-row">
+                            <div class="test-meta-item">❓ <span>25 câu</span></div>
+                            <div class="test-meta-item">⏱ <span>30 phút</span></div>
+                            <div class="test-meta-item">🎯 <span>Điểm đạt: 75%</span></div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:35%"></div>
+                        </div>
+                        <div style="font-size:11px;color:#2563eb;opacity:.6;margin-top:4px;">14/40 người đã thi</div>
+                        <div class="test-card-footer">
+                            <span class="badge badge-green">Đang Mở</span>
+                            <div class="row-actions">
+                                <div class="act-btn">👁</div>
+                                <div class="act-btn">✏️</div>
+                                <div class="act-btn del">🗑</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="test-card">
+                        <div class="test-card-title">ISO 14001 – Môi Trường</div>
+                        <div class="test-card-desc">Kiểm tra hiểu biết về hệ thống quản lý môi trường theo tiêu chuẩn
+                            quốc tế</div>
+                        <div class="test-meta-row">
+                            <div class="test-meta-item">❓ <span>35 câu</span></div>
+                            <div class="test-meta-item">⏱ <span>50 phút</span></div>
+                            <div class="test-meta-item">🎯 <span>Điểm đạt: 70%</span></div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:0%"></div>
+                        </div>
+                        <div style="font-size:11px;color:#2563eb;opacity:.6;margin-top:4px;">Chưa bắt đầu</div>
+                        <div class="test-card-footer">
+                            <span class="badge badge-yellow">Nháp</span>
+                            <div class="row-actions">
+                                <div class="act-btn">👁</div>
+                                <div class="act-btn">✏️</div>
+                                <div class="act-btn del">🗑</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAIL TABLE -->
+
+            <div class="table-card" style="margin-top:30px;">
+                <table id="tbl-tests" class="display stripe" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Tên Bài Kiểm Tra</th>
+                            <th>Khoa / Phòng</th>
+                            <th>Số Lượt Thi</th>
+                            <th>Điểm TB</th>
+                            <th>Tỉ Lệ Đạt</th>
+                            <th>Ngày Tổ Chức</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="col-name">Kiểm Tra Nghiệp Vụ Q1 2026<small>40 câu · 60 phút</small></td>
+                            <td>Toàn công ty</td>
+                            <td>100</td>
+                            <td>78.4</td>
+                            <td><span class="badge badge-green">78%</span></td>
+                            <td>15/03/2026</td>
+                            <td><span class="badge badge-green">Hoàn thành</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">An Toàn Lao Động – Cơ Bản<small>30 câu · 45 phút</small></td>
+                            <td>Phòng Kỹ Thuật</td>
+                            <td>45</td>
+                            <td>85.1</td>
+                            <td><span class="badge badge-green">91%</span></td>
+                            <td>10/02/2026</td>
+                            <td><span class="badge badge-green">Hoàn thành</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">Kỹ Năng Vận Hành Thiết Bị<small>25 câu · 30 phút</small></td>
+                            <td>Phòng Kỹ Thuật</td>
+                            <td>40</td>
+                            <td>71.2</td>
+                            <td><span class="badge badge-yellow">65%</span></td>
+                            <td>05/03/2026</td>
+                            <td><span class="badge badge-blue">Đang mở</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">ISO 9001 – Quản Lý Chất Lượng<small>35 câu · 50 phút</small></td>
+                            <td>Phòng QC</td>
+                            <td>28</td>
+                            <td>82.6</td>
+                            <td><span class="badge badge-green">86%</span></td>
+                            <td>20/02/2026</td>
+                            <td><span class="badge badge-green">Hoàn thành</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">Bảo Mật Thông Tin Cơ Bản<small>20 câu · 25 phút</small></td>
+                            <td>Phòng IT</td>
+                            <td>32</td>
+                            <td>88.9</td>
+                            <td><span class="badge badge-green">94%</span></td>
+                            <td>18/01/2026</td>
+                            <td><span class="badge badge-green">Hoàn thành</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">Quy Trình Tuyển Dụng Mới<small>15 câu · 20 phút</small></td>
+                            <td>Phòng Nhân Sự</td>
+                            <td>12</td>
+                            <td>69.3</td>
+                            <td><span class="badge badge-yellow">58%</span></td>
+                            <td>02/04/2026</td>
+                            <td><span class="badge badge-blue">Đang mở</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">PCCC – Định Kỳ Hằng Năm<small>20 câu · 30 phút</small></td>
+                            <td>Toàn công ty</td>
+                            <td>178</td>
+                            <td>75.8</td>
+                            <td><span class="badge badge-green">80%</span></td>
+                            <td>08/01/2026</td>
+                            <td><span class="badge badge-green">Hoàn thành</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">Kỹ Năng Giao Tiếp Khách Hàng<small>25 câu · 35 phút</small></td>
+                            <td>Phòng Kinh Doanh</td>
+                            <td>21</td>
+                            <td>64.7</td>
+                            <td><span class="badge badge-red">48%</span></td>
+                            <td>25/03/2026</td>
+                            <td><span class="badge badge-blue">Đang mở</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">ISO 14001 – Môi Trường<small>35 câu · 50 phút</small></td>
+                            <td>Phòng QC</td>
+                            <td>0</td>
+                            <td>–</td>
+                            <td><span class="badge badge-yellow">Chưa thi</span></td>
+                            <td>—</td>
+                            <td><span class="badge badge-yellow">Nháp</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">Quy Định Sử Dụng Thiết Bị VP<small>18 câu · 20 phút</small></td>
+                            <td>Phòng Hành Chính</td>
+                            <td>56</td>
+                            <td>90.4</td>
+                            <td><span class="badge badge-green">96%</span></td>
+                            <td>30/01/2026</td>
+                            <td><span class="badge badge-green">Hoàn thành</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">Kế Hoạch Đào Tạo 2026<small>30 câu · 45 phút</small></td>
+                            <td>Phòng Nhân Sự</td>
+                            <td>38</td>
+                            <td>73.5</td>
+                            <td><span class="badge badge-green">71%</span></td>
+                            <td>12/04/2026</td>
+                            <td><span class="badge badge-blue">Đang mở</span></td>
+                        </tr>
+                        <tr>
+                            <td class="col-name">Quản Lý Kho Vật Tư<small>22 câu · 30 phút</small></td>
+                            <td>Phòng Logistics</td>
+                            <td>19</td>
+                            <td>62.1</td>
+                            <td><span class="badge badge-red">42%</span></td>
+                            <td>14/02/2026</td>
+                            <td><span class="badge badge-green">Hoàn thành</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div><!-- /content -->
+    </div><!-- /main -->
+
+    <!-- ── MODALS ── -->
+
+    <!-- ADD TEST MODAL -->
+    <div class="modal-overlay" id="addTestModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Tạo Bài Kiểm Tra Mới</div>
+                <div class="modal-close" onclick="closeModal('addTestModal')">×</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tên Bài Kiểm Tra *</label>
+                <input type="text" class="form-input" placeholder="VD: Kiểm tra nghiệp vụ Q2 2026">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mô Tả</label>
+                <textarea class="form-input" style="min-height:60px"
+                    placeholder="Mô tả ngắn về bài kiểm tra..."></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Số Câu Hỏi</label>
+                    <input type="number" class="form-input" placeholder="VD: 40" value="40">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Thời Gian (phút)</label>
+                    <input type="number" class="form-input" placeholder="VD: 60" value="60">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Điểm Đạt (%)</label>
+                    <input type="number" class="form-input" placeholder="70" value="70">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Danh Mục Câu Hỏi</label>
+                    <select class="form-input">
+                        <option>Tất cả danh mục</option>
+                        <option>Kỹ thuật chung</option>
+                        <option>An toàn lao động</option>
+                        <option>ISO 9001</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Ngày Bắt Đầu</label>
+                    <input type="date" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ngày Kết Thúc</label>
+                    <input type="date" class="form-input">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('addTestModal')">Hủy</button>
+                <button class="btn btn-ghost"
+                    onclick="saveAndToast('addTestModal','📝 Đã lưu bài kiểm tra dưới dạng nháp!')">Lưu Nháp</button>
+                <button class="btn btn-primary"
+                    onclick="saveAndToast('addTestModal','✅ Đã tạo bài kiểm tra thành công!')">Tạo & Kích Hoạt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-nav" id="mobileNav">
+        <div class="mob-nav-item active" id="mob-dashboard" onclick="mobileNav('dashboard', this)">
+            <span class="mob-icon">🏠</span>
+            <span>Tổng Quan</span>
+        </div>
+        <div class="mob-nav-item" id="mob-documents" onclick="mobileNav('documents', this)">
+            <span class="mob-icon">📄</span>
+            <span>Quy trình</span>
+        </div>
+        <div class="mob-nav-item" id="mob-questions" onclick="mobileNav('questions', this)">
+            <span class="mob-icon">❓</span>
+            <span>Câu Hỏi</span>
+        </div>
+        <div class="mob-nav-item" id="mob-tests" onclick="mobileNav('tests', this)">
+            <span class="mob-icon">📝</span>
+            <span>Kiểm Tra</span>
+        </div>
+        <div class="mob-nav-item" id="mob-results" onclick="mobileNav('results', this)">
+            <span class="mob-icon">📊</span>
+            <span>Kết Quả</span>
+        </div>
+    </nav>
+
+    <script>
+        const pageMap = {
+            dashboard: { title: 'Bảng Điều Khiển', sub: 'Tổng quan hệ thống' },
+            documents: { title: 'Quản Lý Quy trình', sub: 'Quản lý / Quy trình' },
+            questions: { title: 'Quản Lý Câu Hỏi', sub: 'Quản lý / Câu hỏi' },
+            tests: { title: 'Quản Lý Bài Kiểm Tra', sub: 'Quản lý / Bài kiểm tra' },
+            categories: { title: 'Danh Mục', sub: 'Quản lý / Danh mục' },
+            results: { title: 'Kết Quả Thi', sub: 'Kết quả / Thống kê' },
+            reports: { title: 'Báo Cáo', sub: 'Kết quả / Báo cáo' },
+            users: { title: 'Người Dùng', sub: 'Hệ thống / Người dùng' },
+            settings: { title: 'Cài Đặt', sub: 'Hệ thống / Cài đặt' },
+        };
+
+        function mobileNav(page, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.mob-nav-item').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            el.classList.add('active');
+            const info = pageMap[page];
+            document.getElementById('pageTitle').textContent = info.title;
+            document.getElementById('breadcrumb').textContent = info.sub;
+            // sync sidebar highlight
+            document.querySelectorAll('.nav-item').forEach(n => {
+                if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + page + "'")) {
+                    n.classList.add('active');
+                }
+            });
+            // scroll content to top
+            document.querySelector('.content').scrollTop = 0;
+            window.scrollTo(0, 0);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+        });
+
+        function setTab(el) {
+            el.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+
+
+    </script>
+
+    <!-- jQuery + DataTables -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        /* ── DataTables shared config ── */
+        const dtDefaults = {
+            language: {
+                search: '',
+                searchPlaceholder: ' Tìm kiếm...',
+                lengthMenu: 'Hiển thị _MENU_ dòng',
+                info: 'Hiển thị _START_–_END_ / _TOTAL_ bản ghi',
+                infoEmpty: 'Không có bản ghi',
+                infoFiltered: '(lọc từ _MAX_ bản ghi)',
+                zeroRecords: 'Không tìm thấy kết quả phù hợp',
+                emptyTable: 'Không có dữ liệu',
+                paginate: {
+                    first: '«',
+                    previous: '‹',
+                    next: '›',
+                    last: '»'
+                }
+            },
+            dom:
+                '<"dataTables_top-bar"lf>' +
+                'rt' +
+                '<"dataTables_bottom-bar"ip>',
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50],
+            responsive: true,
+            autoWidth: false,
+            stateSave: false,
+            drawCallback: function () {
+                // Re-apply badge HTML after each draw (DataTables doesn't escape HTML by default)
+            }
+        };
+
+        /* Init dashboard table */
+        const dtDashboard = $('#tbl-tests').DataTable($.extend(true, {}, dtDefaults, {
+            order: [[3, 'desc']],          // sort by date desc
+            columnDefs: [
+                { orderable: false, targets: [1, 4] }   // badge columns not sortable
+            ]
+        }));
+
+        /* Re-init DataTables when switching to a tab that was hidden
+           (DataTables can miscalculate column widths on hidden tabs) */
+        $(document).on('click', '.nav-item, .mob-nav-item', function () {
+            setTimeout(function () {
+                $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+            }, 50);
+        });
+    </script>
+</body>
+
+</html>

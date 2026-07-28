@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BÀI KIỂM TRA</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="img/logorm.png" type="image/gif" sizes="16x16">
+</head>
+
+<body>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top-btn" title="Quay về đầu trang">↑</button>
+
+    <div class="container-bt">
+        <div class="header-bt">
+            <div class="logo-bt">
+                <img src="images/logo.png" alt="MEDLATEC Logo">
+            </div>
+            <h1>BẢNG KIỂM TRA QUY TRÌNH KHÁM BỆNH</h1>
+            <h2>ĐẠI HỌC CẦN THƠ - TRƯỜNG CNTT</h2>
+        </div>
+
+        <div class="content-bt">
+
+            <div class="progress-bar-bt">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <form id="surveyForm">
+                <div class="rating-section">
+                    <label class="section-title-bt">Phần 1: Câu hỏi trắc nghiệm</label>
+                    <div id="questionList">
+                        <div class="q-card" data-question-id="q001">
+                            <div class="q-meta">
+                                <span class="q-num">Q #001</span>
+                                <span class="badge badge-blue">Trắc nghiệm</span>
+                                <span class="badge-right">Kỹ thuật · Danh
+                                    mục
+                                    chung</span>
+                            </div>
+                            <div class="q-text">Theo quy định TCVN 5038:2019, tần suất kiểm tra thiết bị điện tại nơi
+                                làm
+                                việc là bao nhiêu?</div>
+                            <div class="q-options">
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q001" value="a" class="q-radio">
+                                    <span class="q-opt-label">A</span> 3 tháng / lần
+                                </label>
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q001" value="b" class="q-radio">
+                                    <span class="q-opt-label">B</span> 6 tháng / lần
+                                </label>
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q001" value="c" class="q-radio">
+                                    <span class="q-opt-label">C</span> 1 năm / lần
+                                </label>
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q001" value="d" class="q-radio">
+                                    <span class="q-opt-label">D</span> 2 năm / lần
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <div class="q-card" data-question-id="q002">
+                            <div class="q-meta">
+                                <span class="q-num">Q #002</span>
+                                <span class="badge badge-blue">Trắc nghiệm</span>
+                                <span class="badge-right">An toàn lao
+                                    động</span>
+                            </div>
+                            <div class="q-text">Khoảng cách an toàn tối thiểu khi làm việc gần đường dây điện cao thế
+                                110kV
+                                là bao nhiêu?</div>
+                            <div class="q-options">
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q002" value="a" class="q-radio">
+                                    <span class="q-opt-label">A</span> 1,0 mét
+                                </label>
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q002" value="b" class="q-radio">
+                                    <span class="q-opt-label">B</span> 2,0 mét
+                                </label>
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q002" value="c" class="q-radio">
+                                    <span class="q-opt-label">C</span> 4,0 mét
+                                </label>
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q002" value="d" class="q-radio">
+                                    <span class="q-opt-label">D</span> 6,0 mét
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <div class="q-card" data-question-id="q003">
+                            <div class="q-meta">
+                                <span class="q-num">Q #003</span>
+                                <span class="badge badge-green">Đúng/Sai</span>
+                                <span class="badge-right">ISO
+                                    9001:2015</span> 
+                            </div>
+                            <div class="q-text">Theo tiêu chuẩn ISO 9001:2015, việc xem xét của lãnh đạo phải được thực
+                                hiện
+                                theo lịch đã hoạch định ít nhất một năm một lần?</div>
+                            <div class="q-options">
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q003" value="true" class="q-radio">
+                                    <span class="q-opt-label">✓</span> Đúng
+                                </label>
+                                <label class="q-opt q-opt-input">
+                                    <input type="radio" name="q003" value="false" class="q-radio">
+                                    <span class="q-opt-label">✗</span> Sai
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">HOÀN THÀNH</button>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('surveyForm');
+        const progressBar = document.getElementById('progressBar');
+        const radioButtons = document.querySelectorAll('.q-radio');
+        const totalQuestions = document.querySelectorAll('[data-question-id]').length;
+        const answeredQuestions = new Set();
+  
+        // Update progress bar based on answered questions
+        function updateProgress() {
+            const progress = (answeredQuestions.size / totalQuestions) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        // Handle option selection
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const questionCard = e.target.closest('.q-card');
+                const questionId = questionCard.getAttribute('data-question-id');
+                const optionLabel = e.target.closest('label');
+                
+                // Update answered questions set
+                answeredQuestions.add(questionId);
+                
+                // Remove previous selection highlight in this question
+                const allOptions = questionCard.querySelectorAll('label.q-opt-input');
+                allOptions.forEach(opt => {
+                    opt.classList.remove('q-opt-selected');
+                });
+                
+                // Add selection highlight to selected option
+                optionLabel.classList.add('q-opt-selected');
+                
+                // Update progress
+                updateProgress();
+            });
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (answeredQuestions.size === totalQuestions) {
+                alert('Đã hoàn thành bài kiểm tra!');
+            } else {
+                alert(`Vui lòng trả lời hết ${totalQuestions} câu hỏi. Hiện tại bạn đã trả lời ${answeredQuestions.size}/${totalQuestions} câu.`);
+            }
+        });
+  
+        // Scroll to Top Button
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollTopBtn.classList.add('show');
+            } else {
+                scrollTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+    </script>
+</body>
+
+</html>

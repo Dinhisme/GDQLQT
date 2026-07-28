@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VănBản Pro – Hệ Thống Quản Lý</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- DataTables -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-badge">
+                <div class="logo-icon">📋</div>
+                <div>
+                    <div class="logo-text">BVPSTPCT</div>
+                    <div class="logo-sub">Quản Lý Quy Trình</div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Tổng Quan</div>
+            <a class="nav-item " href="/index.html">
+                <span class="nav-icon">🏠</span> Bảng Điều Khiển
+            </a>
+
+            <div class="nav-section-label">Quản Lý</div>
+            <a class="nav-item" href="/qlqt.html">
+                <span class="nav-icon">📄</span> Quy trình
+                <span class="nav-badge">48</span>
+            </a>
+            <a class="nav-item active" href="/qlch.html">
+                <span class="nav-icon">❓</span> Câu Hỏi
+                <span class="nav-badge">126</span>
+            </a>
+            <a class="nav-item" href="/qlbkt.html">
+                <span class="nav-icon">📝</span> Bài Kiểm Tra
+                <span class="nav-badge">18</span>
+            </a>
+
+            <div class="nav-section-label">Hệ Thống</div>
+            <a class="nav-item" href="/nguoidung.html">
+                <span class="nav-icon">👥</span> Người Dùng
+            </a>
+            <a class="nav-item" href="/khoaphong.html">
+                <span class="nav-icon">🏢</span> Khoa / Phòng
+            </a>
+            <a class="nav-item" href="/settings.html">
+                <span class="nav-icon">⚙️</span> Cài Đặt
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar">AT</div>
+                <div class="user-info">
+                    <div class="user-name">Phùng Quốc Vinh</div>
+                    <div class="user-role">Quản trị viên</div>
+                </div>
+                <span style="font-size:14px; opacity:.5;">⋯</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- HEADER -->
+        <header class="header">
+            <button class="burger" onclick="toggleSidebar()">☰</button>
+            <div>
+                <div class="page-title" id="pageTitle">Bảng Điều Khiển</div>
+                <div class="breadcrumb" id="breadcrumb">Tổng quan hệ thống</div>
+            </div>
+            <div class="header-actions">
+                <div class="user-card">
+                    <div class="avatar" style="color: black !important;">AT</div>
+                    <div class="user-info">
+                        <div class="user-name" style="color: black !important;">Phùng Quốc Vinh</div>
+                        <div class="user-role" style="color: black !important;">Quản trị viên</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="content">
+
+            <!-- QUESTIONS PAGE -->
+            <div class="page" id="page-questions">
+                <div class="section-header" style="margin-bottom:20px">
+                    <div>
+                        <div class="section-title">Quản Lý Câu Hỏi</div>
+                        <div class="section-sub">Kho câu hỏi · 126 câu hỏi đang hoạt động</div>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:center;">
+                        <button class="btn btn-ghost" onclick="openModal('importModal')">⬆ Nhập Excel</button>
+                        <button class="btn btn-primary" onclick="openModal('addQuestionModal')">+ Thêm Câu Hỏi</button>
+                    </div>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="setTab(this)">Tất Cả (126)</button>
+                    <button class="filter-tab" onclick="setTab(this)">Trắc Nghiệm (98)</button>
+                    <button class="filter-tab" onclick="setTab(this)">Tự Luận (18)</button>
+                    <button class="filter-tab" onclick="setTab(this)">Đúng/Sai (10)</button>
+                    <button class="filter-tab" onclick="setTab(this)">Đã Lưu Trữ (24)</button>
+                </div>
+
+                <div id="questionList">
+                    <div class="q-card">
+                        <div class="q-meta">
+                            <span class="q-num">Q #001</span>
+                            <span class="badge badge-blue">Trắc nghiệm</span>
+                            <span class="badge-right">Kỹ thuật · Danh mục
+                                chung</span>
+                        </div>
+                        <div class="q-text">Theo quy định TCVN 5038:2019, tần suất kiểm tra thiết bị điện tại nơi làm
+                            việc là bao nhiêu?</div>
+                        <div class="q-options">
+                            <label class="q-opt q-opt-input">
+                                <input type="radio" name="q001" value="a" class="q-radio">
+                                <span class="q-opt-label">A</span> 3 tháng / lần
+                            </label>
+                            <label class="q-opt q-opt-input correct">
+                                <input type="radio" name="q001" value="b" class="q-radio">
+                                <span class="q-opt-label">B</span> 6 tháng / lần
+                            </label>
+                            <label class="q-opt q-opt-input">
+                                <input type="radio" name="q001" value="c" class="q-radio">
+                                <span class="q-opt-label">C</span> 1 năm / lần
+                            </label>
+                            <label class="q-opt q-opt-input">
+                                <input type="radio" name="q001" value="d" class="q-radio">
+                                <span class="q-opt-label">D</span> 2 năm / lần
+                            </label>
+                        </div>
+                        <div class="q-footer">
+                            <span style="font-size:11.5px;color:#2563eb;opacity:.65;">Đã sử dụng: 14 lần · Tỉ lệ đúng:
+                                73%</span>
+                            <div class="row-actions">
+                                <div class="act-btn" title="Chỉnh sửa">✏️</div>
+                                <div class="act-btn" title="Nhân bản">⧉</div>
+                                <div class="act-btn del" title="Xóa">🗑</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="q-card">
+                        <div class="q-meta">
+                            <span class="q-num">Q #002</span>
+                            <span class="badge badge-blue">Trắc nghiệm</span>
+                            <span class="badge-right">An toàn lao
+                                động</span>
+                        </div>
+                        <div class="q-text">Khoảng cách an toàn tối thiểu khi làm việc gần đường dây điện cao thế 110kV
+                            là bao nhiêu?</div>
+                        <div class="q-options">
+                            <label class="q-opt q-opt-input">
+                                <input type="radio" name="q002" value="a" class="q-radio">
+                                <span class="q-opt-label">A</span> 1,0 mét
+                            </label>
+                            <label class="q-opt q-opt-input">
+                                <input type="radio" name="q002" value="b" class="q-radio">
+                                <span class="q-opt-label">B</span> 2,0 mét
+                            </label>
+                            <label class="q-opt q-opt-input correct">
+                                <input type="radio" name="q002" value="c" class="q-radio">
+                                <span class="q-opt-label">C</span> 4,0 mét
+                            </label>
+                            <label class="q-opt q-opt-input">
+                                <input type="radio" name="q002" value="d" class="q-radio">
+                                <span class="q-opt-label">D</span> 6,0 mét
+                            </label>
+                        </div>
+                        <div class="q-footer">
+                            <span style="font-size:11.5px;color:#2563eb;opacity:.6;">Đã sử dụng: 8 lần · Tỉ lệ đúng:
+                                41%</span>
+                            <div class="row-actions">
+                                <div class="act-btn">✏️</div>
+                                <div class="act-btn">⧉</div>
+                                <div class="act-btn del">🗑</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="q-card">
+                        <div class="q-meta">
+                            <span class="q-num">Q #003</span>
+                            <span class="badge badge-green">Đúng/Sai</span>
+                            <span class="badge-right">ISO 9001:2015</span>
+                        </div>
+                        <div class="q-text">Theo tiêu chuẩn ISO 9001:2015, việc xem xét của lãnh đạo phải được thực hiện
+                            theo lịch đã hoạch định ít nhất một năm một lần?</div>
+                        <div class="q-options">
+                            <label class="q-opt q-opt-input correct">
+                                <input type="radio" name="q003" value="true" class="q-radio">
+                                <span class="q-opt-label">✓</span> Đúng
+                            </label>
+                            <label class="q-opt q-opt-input">
+                                <input type="radio" name="q003" value="false" class="q-radio">
+                                <span class="q-opt-label">✗</span> Sai
+                            </label>
+                        </div>
+                        <div class="q-footer">
+                            <span style="font-size:11.5px;color:#2563eb;opacity:.6;">Đã sử dụng: 22 lần · Tỉ lệ đúng:
+                                88%</span>
+                            <div class="row-actions">
+                                <div class="act-btn">✏️</div>
+                                <div class="act-btn">⧉</div>
+                                <div class="act-btn del">🗑</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /content -->
+    </div><!-- /main -->
+
+    <!-- ── MODALS ── -->
+
+    <!-- ADD QUESTION MODAL -->
+    <div class="modal-overlay" id="addQuestionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Thêm Câu Hỏi Mới</div>
+                <div class="modal-close" onclick="closeModal('addQuestionModal')">×</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nội Dung Câu Hỏi *</label>
+                <textarea class="form-input" placeholder="Nhập nội dung câu hỏi..."></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Loại Câu Hỏi</label>
+                    <select class="form-input">
+                        <option>Trắc nghiệm</option>
+                        <option>Đúng / Sai</option>
+                        <option>Tự luận</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Độ Khó</label>
+                    <select class="form-input">
+                        <option>Dễ</option>
+                        <option>Trung bình</option>
+                        <option>Khó</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Đáp Án A</label>
+                <input type="text" class="form-input" placeholder="Nhập đáp án A...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Đáp Án B</label>
+                <input type="text" class="form-input" placeholder="Nhập đáp án B...">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Đáp Án C</label>
+                    <input type="text" class="form-input" placeholder="Đáp án C...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Đáp Án D</label>
+                    <input type="text" class="form-input" placeholder="Đáp án D...">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Đáp Án Đúng</label>
+                    <select class="form-input">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Danh Mục</label>
+                    <select class="form-input">
+                        <option>Kỹ thuật chung</option>
+                        <option>An toàn lao động</option>
+                        <option>ISO 9001</option>
+                        <option>ISO 14001</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('addQuestionModal')">Hủy</button>
+                <button class="btn btn-primary">Lưu Câu Hỏi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMPORT MODAL -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal" style="max-width:420px">
+            <div class="modal-header">
+                <div class="modal-title">Nhập Câu Hỏi từ Excel</div>
+                <div class="modal-close" onclick="closeModal('importModal')">×</div>
+            </div>
+            <div style="text-align:center;padding:20px 0">
+                <div style="font-size:48px;margin-bottom:12px;">📊</div>
+                <div style="font-size:13px;color:rgba(176,208,255,.75);line-height:1.6;">Tải lên file Excel (.xlsx) theo
+                    mẫu chuẩn.<br>Hệ thống sẽ tự động phân tích và nhập câu hỏi.</div>
+            </div>
+            <div
+                style="border:2px dashed rgba(59,130,246,0.25);border-radius:9px;padding:28px;text-align:center;cursor:pointer;color:#2563eb;opacity:.8;">
+                ⬆ Chọn File Excel
+                <div style="font-size:11px;margin-top:4px;opacity:.6;">.xlsx · Tối đa 5MB · 1000 câu hỏi / lần</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:16px;">
+                <div style="flex:1;height:1px;background:rgba(59,130,246,0.15)"></div>
+                <span style="font-size:11px;color:#2563eb;opacity:.5;">hoặc</span>
+                <div style="flex:1;height:1px;background:rgba(59,130,246,0.15)"></div>
+            </div>
+            <div style="text-align:center;margin-top:12px;">
+                <button class="btn btn-ghost" style="font-size:12px;">⬇ Tải Mẫu File Excel</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('importModal')">Đóng</button>
+                <button class="btn btn-primary">Nhập Dữ Liệu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-nav" id="mobileNav">
+        <div class="mob-nav-item active" id="mob-dashboard" onclick="mobileNav('dashboard', this)">
+            <span class="mob-icon">🏠</span>
+            <span>Tổng Quan</span>
+        </div>
+        <div class="mob-nav-item" id="mob-documents" onclick="mobileNav('documents', this)">
+            <span class="mob-icon">📄</span>
+            <span>Quy trình</span>
+        </div>
+        <div class="mob-nav-item" id="mob-questions" onclick="mobileNav('questions', this)">
+            <span class="mob-icon">❓</span>
+            <span>Câu Hỏi</span>
+        </div>
+        <div class="mob-nav-item" id="mob-tests" onclick="mobileNav('tests', this)">
+            <span class="mob-icon">📝</span>
+            <span>Kiểm Tra</span>
+        </div>
+        <div class="mob-nav-item" id="mob-results" onclick="mobileNav('results', this)">
+            <span class="mob-icon">📊</span>
+            <span>Kết Quả</span>
+        </div>
+    </nav>
+
+    <script>
+        const pageMap = {
+            dashboard: { title: 'Bảng Điều Khiển', sub: 'Tổng quan hệ thống' },
+            documents: { title: 'Quản Lý Quy trình', sub: 'Quản lý / Quy trình' },
+            questions: { title: 'Quản Lý Câu Hỏi', sub: 'Quản lý / Câu hỏi' },
+            tests: { title: 'Quản Lý Bài Kiểm Tra', sub: 'Quản lý / Bài kiểm tra' },
+            categories: { title: 'Danh Mục', sub: 'Quản lý / Danh mục' },
+            results: { title: 'Kết Quả Thi', sub: 'Kết quả / Thống kê' },
+            reports: { title: 'Báo Cáo', sub: 'Kết quả / Báo cáo' },
+            users: { title: 'Người Dùng', sub: 'Hệ thống / Người dùng' },
+            settings: { title: 'Cài Đặt', sub: 'Hệ thống / Cài đặt' },
+        };
+
+        function mobileNav(page, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.mob-nav-item').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            el.classList.add('active');
+            const info = pageMap[page];
+            document.getElementById('pageTitle').textContent = info.title;
+            document.getElementById('breadcrumb').textContent = info.sub;
+            // sync sidebar highlight
+            document.querySelectorAll('.nav-item').forEach(n => {
+                if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + page + "'")) {
+                    n.classList.add('active');
+                }
+            });
+            // scroll content to top
+            document.querySelector('.content').scrollTop = 0;
+            window.scrollTo(0, 0);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+        });
+
+        function setTab(el) {
+            el.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+    </script>
+
+</body>
+
+</html>
