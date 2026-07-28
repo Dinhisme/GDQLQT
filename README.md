@@ -8,10 +8,7 @@
 - public/: file tĩnh và JS frontend
 
 ## Môi trường
-Sử dụng file .env:
-
-PORT=3000
-SPRING_BOOT_API_URL=http://172.16.1.66:9000/api
+Sử dụng file .env
 
 ## Chạy
 npm install
