@@ -4,9 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VănBản Pro – Hệ Thống Quản Lý</title>
+    <title>BVPSTPCT – Hệ Thống Quản Lý</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- DataTables -->
     <link rel="stylesheet"
@@ -45,10 +48,10 @@
                 <span class="nav-icon">📄</span> Văn Bản
                 <span class="nav-badge" id="sidebar-vanban"></span>
             </div>
-            <a class="nav-item" href="/qlch.html">
+            <div class="nav-item" onclick="navigate('qlch', this)">
                 <span class="nav-icon">❓</span> Câu Hỏi
                 <span class="nav-badge" id="sidebar-cauhoi"></span>
-            </a>
+            </div>
             <a class="nav-item" href="/qlbkt.html">
                 <span class="nav-icon">📝</span> Bài Kiểm Tra
                 <span class="nav-badge" id="sidebar-baikiemtra"></span>
@@ -123,7 +126,7 @@
             <span class="mob-icon">📄</span>
             <span>Văn Bản</span>
         </div>
-        <div class="mob-nav-item" id="mob-questions" onclick="mobileNav('questions', this)">
+        <div class="mob-nav-item" id="mob-questions" onclick="mobileNav('qlch', this)">
             <span class="mob-icon">❓</span>
             <span>Câu Hỏi</span>
         </div>
@@ -157,6 +160,7 @@
                             <option value="Quy Trình">Quy Trình</option>
                             <option value="Phác Đồ Điều Trị">Phác Đồ Điều Trị</option>
                             <option value="Quy Định">Quy Định</option>
+                            <option value="Quyết Định">Quyết Định</option>
                             <option value="Hướng Dẫn">Hướng Dẫn</option>
                             <option value="Thông Báo">Thông Báo</option>
                             <option value="Báo Cáo">Báo Cáo</option>
@@ -252,6 +256,7 @@
                             <option value="Quy Trình">Quy Trình</option>
                             <option value="Phác Đồ Điều Trị">Phác Đồ Điều Trị</option>
                             <option value="Quy Định">Quy Định</option>
+                            <option value="Quyết Định">Quyết Định</option>
                             <option value="Hướng Dẫn">Hướng Dẫn</option>
                             <option value="Thông Báo">Thông Báo</option>
                             <option value="Báo Cáo">Báo Cáo</option>
@@ -328,9 +333,281 @@
         </div>
     </div>
 
+    <!-- ADD QUESTION MODAL -->
+    <div class="modal-overlay" id="addQuestionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Thêm Câu Hỏi Mới</div>
+                <div class="modal-close" onclick="closeModal('addQuestionModal')">×</div>
+            </div>
+            <form id="addQuestionForm">
+                <div class="form-group">
+                    <input disabled id="quyTrinhSelectAddCauHoi" class="form-input" style="background: white">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nội Dung Câu Hỏi *</label>
+                    <textarea id="noiDungCauHoi" class="form-input" placeholder="Nhập nội dung câu hỏi..."
+                        required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Loại Câu Hỏi</label>
+                        <select id="loaiCauHoi" class="form-input" onchange="changeLoaiCauHoi()">
+                            <option value="tracNghiem">Trắc nghiệm</option>
+                            <option value="dat">Đạt/Không đạt</option>
+                            <option value="dungSai">Đúng/Sai</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Độ Khó</label>
+                        <select id="trangThaiQ" class="form-input">
+                            <option value=0>Dễ</option>
+                            <option value=1>Trung bình</option>
+                            <option value=2>Khó</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án A</label>
+                        <input id="dapAnA" type="text" class="form-input" placeholder="Nhập đáp án A..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án B</label>
+                        <input id="dapAnB" type="text" class="form-input" placeholder="Nhập đáp án B..." required>
+                    </div>
+                </div>
+                <div class="form-row" id="rowCD">
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án C</label>
+                        <input id="dapAnC" type="text" class="form-input" placeholder="Đáp án C..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án D</label>
+                        <input id="dapAnD" type="text" class="form-input" placeholder="Đáp án D..." required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án Đúng</label>
+
+                        <select id="dapAnDung" class="form-input">
+                            <option value=0>A</option>
+                            <option value=1>B</option>
+                            <option value=2>C</option>
+                            <option value=3>D</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" onclick="closeModal('addQuestionModal')">Hủy</button>
+                    <button class="btn btn-primary" type="submit">Lưu Câu Hỏi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- UPDATE QUESTION MODAL -->
+    <div class="modal-overlay" id="updateQuestionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Cập nhật Câu Hỏi</div>
+                <div class="modal-close" onclick="closeModal('updateQuestionModal')">×</div>
+            </div>
+            <form id="updateQuestionForm">
+                <div class="form-group">
+                    <input disabled id="quyTrinhSelectUpdateCauHoi" class="form-input" style="background: white">
+
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nội Dung Câu Hỏi *</label>
+                    <textarea id="noiDungCauHoiUpdate" class="form-input" placeholder="Nhập nội dung câu hỏi..."
+                        required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Loại Câu Hỏi</label>
+                        <select id="loaiCauHoiUpdate" class="form-input" onchange="changeLoaiCauHoiUpdate()">
+                            <option value="tracNghiem">Trắc nghiệm</option>
+                            <option value="dat">Đạt/Không đạt</option>
+                            <option value="dungSai">Đúng/Sai</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Độ Khó</label>
+                        <select id="trangThaiQUpdate" class="form-input">
+                            <option value=0>Dễ</option>
+                            <option value=1>Trung bình</option>
+                            <option value=2>Khó</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án A</label>
+                        <input id="dapAnAUpdate" type="text" class="form-input" placeholder="Nhập đáp án A..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án B</label>
+                        <input id="dapAnBUpdate" type="text" class="form-input" placeholder="Nhập đáp án B..." required>
+                    </div>
+                </div>
+                <div class="form-row" id="rowCDUpdate">
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án C</label>
+                        <input id="dapAnCUpdate" type="text" class="form-input" placeholder="Đáp án C..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án D</label>
+                        <input id="dapAnDUpdate" type="text" class="form-input" placeholder="Đáp án D..." required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Đáp Án Đúng</label>
+
+                        <select id="dapAnDungUpdate" class="form-input">
+                            <option value=0>A</option>
+                            <option value=1>B</option>
+                            <option value=2>C</option>
+                            <option value=3>D</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" onclick="closeModal('updateQuestionModal')">Hủy</button>
+                    <button class="btn btn-primary" type="submit">Cập nhật Câu Hỏi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="copyQuestionModal">
+        <div class="modal copy-question-modal">
+
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span style="margin-right: 8px;">⧉</span>
+                    Sao chép câu hỏi
+                </div>
+
+                <div class="modal-close" onclick="closeCopyQuestionModal()">
+                    ×
+                </div>
+            </div>
+
+            <div class="copy-question-body">
+
+                <div class="copy-question-icon">
+                    ⧉
+                </div>
+
+                <div class="copy-question-content">
+
+                    <h3>Bạn có chắc muốn sao chép câu hỏi này?</h3>
+
+                    <p class="copy-question-description">
+                        Một câu hỏi mới sẽ được tạo dựa trên câu hỏi hiện tại.
+                    </p>
+
+                    <div class="copy-question-preview">
+
+                        <div class="copy-question-id">
+                            Câu hỏi #<span id="copyQuestionId"></span>
+                        </div>
+
+                        <div class="copy-question-text" id="copyQuestionContent">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-ghost" onclick="closeCopyQuestionModal()">
+                    Hủy
+                </button>
+
+                <button type="button" class="btn btn-primary" onclick="confirmSaoChepCauHoi()">
+                    ⧉ Sao chép câu hỏi
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- IMPORT MODAL -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal">
+
+            <div class="modal-header">
+                <div class="modal-title">
+                    Nhập câu hỏi từ Excel
+                </div>
+
+                <div class="modal-close" onclick="closeModal('importModal')">
+                    ×
+                </div>
+            </div>
+
+            <form id="importQuestionForm">
+
+                <!-- Quy trình -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Upload cho Văn bản
+                    </label>
+
+                    <input disabled id="quyTrinhSelectImport" class="form-input" style="background: white">
+                </div>
+
+                <!-- File Excel -->
+                <div class="form-group">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label class="form-label" style="margin-bottom: 0;">
+                            File Excel
+                        </label>
+
+                        <a href="/ext/MAU-EXCEL-CAUHOI.xlsx" download="MAU-EXCEL-CAUHOI.xlsx" class="btn btn-ghost"
+                            style="padding: 6px 12px;font-size: 13px; text-decoration: none;">
+                            ⬇ Tải file mẫu
+                        </a>
+                    </div>
+
+                    <input type="file" id="excelFile" class="form-input" accept=".xlsx" required>
+
+                    <small style="display: block; margin-top: 6px; color: #6b7280;font-size: 12px;">
+                        Vui lòng sử dụng đúng định dạng file mẫu khi nhập dữ liệu.
+                    </small>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('importModal')">
+                        Hủy
+                    </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        ⬆ Nhập dữ liệu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
     <!-- jQuery + DataTables -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script src="js/index.js"></script>
     <script src="api/dashboard_api.js"></script>
@@ -339,6 +616,7 @@
     <script src="js/qlqt.js"></script>
     <script src="api/qlqt_api.js"></script>
 
+    <script src="api/qlch_api.js"></script>
 
     <script src="js/databaseDefaults.js"></script>
 </body>

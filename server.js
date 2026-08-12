@@ -25,13 +25,14 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 20 * 1024 * 1024 }
 });
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(uploadsDir));
+app.use("/ext", express.static("ext"));
 
 const javaBackendUrl = process.env.API_URL;
 const javaAdminBackendUrl = process.env.ADMIN_API_URL;
@@ -237,7 +238,7 @@ app.get("/api/quy-trinh", async (req, res) => {
       (javaResponse.data && Array.isArray(javaResponse.data)) ? javaResponse.data :
         [];
 
-    // console.log(`✅ Lấy danh sách góp ý thành công: ${dataList.length} items`);
+    // console.log(`✅ Lấy danh sách dữ liệu thành công: ${dataList.length} items`);
     return res.json({
       success: true,
       message: "Lấy danh sách văn bản thành công!",
@@ -428,6 +429,431 @@ app.delete("/api/quy-trinh/:id", async (req, res) => {
 });
 
 // API Quản lý câu hỏi
+app.get("/api/cau-hoi", async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const resAPI = await fetch(`${javaBackendUrl}/cau-hoi`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      }
+    });
+
+    if (!resAPI.ok) {
+      console.error(`❌ Java Backend error: ${resAPI.status}`);
+      return res.status(resAPI.status).json({
+        success: false,
+        message: resAPI.message,
+        error: await resAPI.text()
+      });
+    }
+
+    const javaResponse = await resAPI.json();
+
+    const dataList = Array.isArray(javaResponse) ? javaResponse :
+      (javaResponse.data && Array.isArray(javaResponse.data)) ? javaResponse.data :
+        [];
+
+    // console.log(`✅ Lấy danh sách dữ liệu thành công: ${dataList.length} items`);
+    return res.json({
+      success: true,
+      message: "Lấy danh sách câu hỏi thành công!",
+      data: dataList,
+      total: dataList.length
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.post("/api/cau-hoi", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { quyTrinhId, noiDung, loaiCauHoi, thuTu, dapAns, indexDapAnDung, trangThai } = req.body;
+
+    const formattedBody = {
+      quyTrinhId,
+      noiDung,
+      loaiCauHoi,
+      thuTu,
+      dapAns,
+      indexDapAnDung,
+      trangThai
+    };
+
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+
+    const resAPI = await fetch(`${javaBackendUrl}/cau-hoi`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    const javaResponse = await resAPI.json();
+
+    if (!resAPI.ok) {
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse.message,
+        error: javaResponse
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Tạo câu hỏi thành công!",
+      data: javaResponse
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.put("/api/cau-hoi/:id", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+    const { id } = req.params;
+
+    const { quyTrinhId, noiDung, loaiCauHoi, thuTu, dapAns, indexDapAnDung, trangThai } = req.body;
+
+    const formattedBody = {
+      quyTrinhId,
+      noiDung,
+      loaiCauHoi,
+      thuTu,
+      dapAns,
+      indexDapAnDung,
+      trangThai
+    };
+
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+
+    const resAPI = await fetch(`${javaBackendUrl}/cau-hoi/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    const javaResponse = await resAPI.json();
+
+    if (!resAPI.ok) {
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse.message,
+        error: javaResponse
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Cập nhật câu hỏi thành công!",
+      data: javaResponse
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.post("/api/cau-hoi/:id/sao-chep", async (req, res) => {
+
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        message: "Token không hợp lệ"
+      });
+    }
+
+    const id = Number(req.params.id);
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "ID câu hỏi không hợp lệ"
+      });
+    }
+
+    const resAPI = await fetch(`${javaBackendUrl}/cau-hoi/${id}/sao-chep`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": authHeader
+      }
+    }
+    );
+
+    const responseText = await resAPI.text();
+
+    let javaResponse;
+
+    try {
+      javaResponse = responseText
+        ? JSON.parse(responseText)
+        : null;
+    } catch (error) {
+
+      return res.status(500).json({
+        success: false,
+        message: "Java Backend trả về dữ liệu không hợp lệ",
+        error: responseText
+      });
+    }
+
+    if (!resAPI.ok) {
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse?.message || "Không thể sao chép câu hỏi",
+        error: javaResponse
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Sao chép câu hỏi thành công!",
+      data: javaResponse
+    });
+
+  } catch (error) {
+
+    console.error("❌ NodeJS Error sao chép câu hỏi:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi NodeJS: " + error.message
+    });
+  }
+});
+
+app.delete("/api/cau-hoi/:id", async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const resAPI = await fetch(`${javaBackendUrl}/cau-hoi/${id}`, {
+      method: "DELETE",
+      headers: {
+        'Authorization': authHeader
+      },
+    });
+
+    if (!resAPI.ok) {
+      const errorText = await resAPI.text();
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: errorText || "Không thể xóa câu hỏi"
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Xóa câu hỏi thành công!"
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.post("/api/cau-hoi/import-excel", upload.single("file"), async (req, res) => {
+
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    // ==========================
+    // Kiểm tra token
+    // ==========================
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        message: "Token không hợp lệ"
+      });
+    }
+
+    // ==========================
+    // Kiểm tra file
+    // ==========================
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Chưa chọn file Excel"
+      });
+    }
+
+    // ==========================
+    // Lấy quyTrinhId
+    // ==========================
+
+    const quyTrinhId = req.body.quyTrinhId;
+
+    if (!quyTrinhId) {
+      return res.status(400).json({
+        success: false,
+        message: "Chưa chọn quy trình"
+      });
+    }
+
+    // console.log("📁 File:", {
+    //   originalname: req.file.originalname,
+    //   mimetype: req.file.mimetype,
+    //   size: req.file.size
+    // });
+
+    // console.log("📌 Quy trình:", quyTrinhId);
+
+
+    // ==========================
+    // Tạo FormData gửi Java
+    // ==========================
+
+    const formData = new FormData();
+
+    const blob = new Blob(
+      [req.file.buffer], { type: req.file.mimetype }
+    );
+
+    formData.append(
+      "file", blob, req.file.originalname
+    );
+
+    formData.append(
+      "quyTrinhId", quyTrinhId
+    );
+
+    // ==========================
+    // Gọi Java Backend
+    // ==========================
+
+    const resAPI = await fetch(`${javaBackendUrl}/cau-hoi/import-excel`, {
+      method: "POST",
+      headers: {
+        "Authorization": authHeader
+      },
+
+      body: formData
+    });
+
+    // ==========================
+    // Đọc response Java
+    // ==========================
+
+    const responseText = await resAPI.text();
+
+    // console.log( "📥 Java Response:", responseText);
+
+    let javaResponse;
+
+    try {
+      javaResponse = JSON.parse(responseText);
+
+    } catch (error) {
+
+      return res.status(500).json({
+        success: false,
+        message: "Java Backend trả về dữ liệu không hợp lệ",
+        error: responseText
+      });
+    }
+
+    // ==========================
+    // Java báo lỗi
+    // ==========================
+
+    if (!resAPI.ok) {
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse.message || "Import Excel thất bại",
+        error: javaResponse
+      });
+    }
+
+    // ==========================
+    // Thành công
+    // ==========================
+
+    return res.json({
+      success: true,
+      message: javaResponse.message || "Import Excel thành công",
+      data: javaResponse
+    });
+
+  } catch (error) {
+
+    console.error("❌ NodeJS Import Excel Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi NodeJS: " + error.message
+    });
+  }
+
+});
 
 // Start server
 app.listen(PORT, () => {

@@ -1,7 +1,7 @@
 const pageMap = {
     dashboard: { title: 'Bảng Điều Khiển', sub: 'Tổng quan hệ thống' },
     qlqt: { title: 'Quản Lý Quy trình', sub: 'Quản lý / Quy trình' },
-    questions: { title: 'Quản Lý Câu Hỏi', sub: 'Quản lý / Câu hỏi' },
+    qlch: { title: 'Quản Lý Câu Hỏi', sub: 'Quản lý / Câu hỏi' },
     tests: { title: 'Quản Lý Bài Kiểm Tra', sub: 'Quản lý / Bài kiểm tra' },
     categories: { title: 'Danh Mục', sub: 'Quản lý / Danh mục' },
     results: { title: 'Kết Quả Thi', sub: 'Kết quả / Thống kê' },
@@ -101,6 +101,9 @@ function loadPage(page) {
             break;
         case 'qlqt':
             loadQLQTPage();
+            break;
+        case 'qlch':
+            loadQLCHPage();
             break;
     }
 }

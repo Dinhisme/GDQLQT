@@ -83,10 +83,7 @@ function createQuyTrinhRows(list) {
 
     return list.map((quytrinh, index) => {
 
-        const badge =
-            quytrinh.trangThai === 1
-                ? "green"
-                : "red";
+        const badge = quytrinh.trangThai === 1 ? "green" : "red";
 
         return `
             <tr>
@@ -187,6 +184,7 @@ function renderQLQTPage(quytrinhList) {
                 <button class="filter-tab" data-type="QUY_TRINH" onclick="setTab(this)">Quy Trình</button>
                 <button class="filter-tab" data-type="PDDT" onclick="setTab(this)">Phác Đồ Điều Trị</button>
                 <button class="filter-tab" data-type="QUY_DINH" onclick="setTab(this)">Quy Định</button>
+                <button class="filter-tab" data-type="QUYET_DINH" onclick="setTab(this)">Quyết Định</button>
                 <button class="filter-tab" data-type="HUONG_DAN" onclick="setTab(this)">Hướng Dẫn</button>
                 <button class="filter-tab" data-type="THONG_BAO" onclick="setTab(this)">Thông Báo</button>
                 <button class="filter-tab" data-type="BAO_CAO" onclick="setTab(this)">Báo Cáo</button>
@@ -254,7 +252,9 @@ function filterQuyTrinh(type) {
         case "QUY_DINH":
             table.column(3).search('Quy Định').draw();
             break;
-
+        case "QUYET_DINH":
+            table.column(3).search('Quyết Định').draw();
+            break;
         case "HUONG_DAN":
             table.column(3).search('Hướng Dẫn').draw();
             break;
@@ -324,6 +324,7 @@ async function submitQuyTrinhForm() {
     formData.append('phamVi', phamVi);
     formData.append('viTriLuu', viTriLuu);
     formData.append('trangThai', String(trangThai));
+
     if (file) {
         formData.append('file', file);
     }
@@ -371,7 +372,7 @@ function clearAddDocForm() {
 
 //Mở cửa sổ để cập nhập văn bản
 function openUpdateQuyTrinhModal(id) {
-    const quytrinhUpdate = window.currentQuyTrinhList.find(q => q.id === id);
+    window.quytrinhUpdate = window.currentQuyTrinhList.find(q => q.id === id);
 
     if (!quytrinhUpdate) {
         showToast('error', 'Thất bại!', "Không nhận được dữ liệu Văn Bản");
