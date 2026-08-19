@@ -200,7 +200,6 @@ async function renderCauHoiPage(cauHoiList) {
                 <button class="filter-tab" data-type="tracNghiem" onclick="setTabCauHoi(this)">Trắc Nghiệm</button>
                 <button class="filter-tab" data-type="dat" onclick="setTabCauHoi(this)">Đạt/Không Đạt</button>
                 <button class="filter-tab" data-type="dungSai" onclick="setTabCauHoi(this)">Đúng/Sai</button>
-                
             </div>
 
             <div id="questionList">
@@ -503,6 +502,8 @@ async function addCauHoiForm() {
         const type = document.querySelector('.filter-tab.active').dataset.type;
         await filterTabCauHoi(type);
 
+        document.getElementById("sidebar-cauhoi").textContent = `${currentCauHoiList.length}`;
+
         showToast('success', 'Thành công!', `Tạo Câu Hỏi mới thành công!`);
         closeModal('addQuestionModal');
         clearAddQuestionForm();
@@ -771,54 +772,6 @@ async function confirmSaoChepCauHoi() {
 
 }
 
-
-
-// async function saoChepCauHoi(cauHoiId) {
-
-//     const cauHoi = window.currentCauHoiList.find(ch => ch.id === cauHoiId);
-
-//     const xacNhan = confirm(
-//         `Bạn có chắc muốn sao chép câu hỏi #${cauHoi.id}?\n\n` +
-//         `${cauHoi.noiDung}`
-//     );
-
-//     if (!xacNhan) {
-//         return;
-//     }
-
-//     const token = localStorage.getItem('authToken');
-
-//     try {
-
-//         const response = await fetch(`/api/cau-hoi/${cauHoiId}/sao-chep`, {
-//             method: 'POST',
-//             headers: {
-//                 'Authorization': `Bearer ${token}`,
-//                 'Content-Type': 'application/json'
-//             }
-//         }
-//         );
-
-//         const data = await response.json();
-
-//         if (!response.ok || !data.success) {
-//             showToast('error', 'Cảnh báo!', data.message || 'Không thể sao chép câu hỏi.');
-//             return;
-//         }
-
-//         showToast('success', 'Thành công!', 'Sao chép câu hỏi thành công!');
-
-//         // Load lại danh sách
-//         await loadQLCHPage();
-
-//     } catch (error) {
-
-//         console.error('❌ Lỗi sao chép câu hỏi:', error);
-
-//         showToast('error', 'Cảnh báo!', 'Có lỗi xảy ra khi sao chép câu hỏi.');
-//     }
-// }
-
 //Xóa câu hỏi
 async function deleteCauHoi(id) {
     // Get token from localStorage (prioritize separate token storage)
@@ -846,6 +799,8 @@ async function deleteCauHoi(id) {
         await filterCauHoiTheoQuyTrinh(document.getElementById('quyTrinhSelect').value);
         const type = document.querySelector('.filter-tab.active').dataset.type;
         await filterTabCauHoi(type);
+
+        document.getElementById("sidebar-cauhoi").textContent = `${currentCauHoiList.length}`;
 
     } catch (error) {
         console.error('Error update câu hỏi:', error);

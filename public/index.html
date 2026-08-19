@@ -52,21 +52,22 @@
                 <span class="nav-icon">❓</span> Câu Hỏi
                 <span class="nav-badge" id="sidebar-cauhoi"></span>
             </div>
-            <a class="nav-item" href="/qlbkt.html">
+            <div class="nav-item" onclick="navigate('qlbktr', this)">
                 <span class="nav-icon">📝</span> Bài Kiểm Tra
                 <span class="nav-badge" id="sidebar-baikiemtra"></span>
-            </a>
+            </div>
 
             <div class="nav-section-label">Hệ Thống</div>
-            <a class="nav-item" href="/nguoidung.html">
+            <div class="nav-item" onclick="navigate('qlnd', this)">
                 <span class="nav-icon">👥</span> Người Dùng
-            </a>
-            <a class="nav-item" href="/khoaphong.html">
-                <span class="nav-icon">🏢</span> Khoa / Phòng
-            </a>
-            <a class="nav-item" href="/settings.html">
-                <span class="nav-icon">⚙️</span> Cài Đặt
-            </a>
+            </div>
+            <div class="nav-item" onclick="navigate('qlkp', this)">
+                <span class="nav-icon">🏢</span> Khoa/Phòng/TT
+            </div>
+            <div class="nav-section-label"></div>
+            <div class="nav-item" onclick="logout()" style="font-weight: bold; color: white;">
+                <span class="nav-icon">⏻ </span> ĐĂNG XUẤT
+            </div>
         </nav>
 
         <div class="sidebar-footer">
@@ -130,7 +131,7 @@
             <span class="mob-icon">❓</span>
             <span>Câu Hỏi</span>
         </div>
-        <div class="mob-nav-item" id="mob-tests" onclick="mobileNav('tests', this)">
+        <div class="mob-nav-item" id="mob-tests" onclick="mobileNav('qlbktr', this)">
             <span class="mob-icon">📝</span>
             <span>Kiểm Tra</span>
         </div>
@@ -602,6 +603,320 @@
         </div>
     </div>
 
+    <!-- ADD TESTS MODAL -->
+    <div class="modal-overlay" id="addTestModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Tạo Bài Kiểm Tra Mới</div>
+                <div class="modal-close" onclick="closeModal('addTestModal')">×</div>
+            </div>
+            <form id="addTestForm">
+                <div class="form-group">
+                    <label class="form-label">Tên Bài Kiểm Tra *</label>
+                    <input id="tenBaiKiemTra" type="text" class="form-input"
+                        placeholder="VD: Kiểm tra nghiệp vụ Q2 2026" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mô Tả</label>
+                    <textarea id="moTa" class="form-input" style="min-height:60px"
+                        placeholder="Mô tả ngắn về bài kiểm tra..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Chọn Văn bản</label>
+                    <select id="quyTrinhSelectBktr" class="form-input" multiple required>
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Chọn Khoa/Phòng/TT Tham Gia</label>
+                    <select id="khoaPhongSelect" class="form-input" multiple required>
+                        <option value="all">--Tất cả Khoa/Phòng/TT / TT--</option>
+
+                    </select>
+                </div>
+
+                <div class="form-row-two">
+
+                    <div class="form-group">
+                        <label class="form-label">Thời Gian Làm Bài (phút)</label>
+                        <input id="thoiGianLamBai" type="number" class="form-input" placeholder="VD: 60" value="60">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Trộn Câu Hỏi</label>
+
+                        <select id="tronCauHoi" class="form-input">
+                            <option value="1">Có</option>
+                            <option value="0">Không</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Thời Gian Bắt Đầu</label>
+                        <input id="thoiGianBatDau" type="datetime-local" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Thời Gian Kết Thúc</label>
+                        <input id="thoiGianKetThuc" type="datetime-local" class="form-input">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" onclick="closeModal('addTestModal')">Hủy</button>
+                    <button class="btn btn-warning" type="button" onclick="addTestForm(0)">
+                        Lưu Nháp
+                    </button>
+                    <button class="btn btn-primary" type="button" onclick="addTestForm(1)">
+                        Tạo & Kích Hoạt
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- UPDATE TESTS MODAL -->
+    <div class="modal-overlay" id="updateTestModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Cập Nhật Bài Kiểm Tra</div>
+                <div class="modal-close" onclick="closeModal('updateTestModal')">×</div>
+            </div>
+            <form id="updateTestForm">
+                <div class="form-group">
+                    <label class="form-label">Tên Bài Kiểm Tra *</label>
+                    <input id="tenBaiKiemTraUpdate" type="text" class="form-input"
+                        placeholder="VD: Kiểm tra nghiệp vụ Q2 2026" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mô Tả</label>
+                    <textarea id="moTaUpdate" class="form-input" style="min-height:60px"
+                        placeholder="Mô tả ngắn về bài kiểm tra..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Chọn Văn bản</label>
+                    <select id="quyTrinhSelectBktrUpdate" class="form-input" multiple required>
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Chọn Khoa/Phòng/TT Tham Gia</label>
+                    <select id="khoaPhongSelectUpdate" class="form-input" multiple required>
+
+                    </select>
+                </div>
+
+                <div class="form-row-two">
+
+                    <div class="form-group">
+                        <label class="form-label">Thời Gian Làm Bài (phút)</label>
+                        <input id="thoiGianLamBaiUpdate" type="number" class="form-input" placeholder="VD: 60"
+                            value="60">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Trộn Câu Hỏi</label>
+
+                        <select id="tronCauHoiUpdate" class="form-input">
+                            <option value="1">Có</option>
+                            <option value="0">Không</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Thời Gian Bắt Đầu</label>
+                        <input id="thoiGianBatDauUpdate" type="datetime-local" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Thời Gian Kết Thúc</label>
+                        <input id="thoiGianKetThucUpdate" type="datetime-local" class="form-input">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" onclick="closeModal('updateTestModal')">Hủy</button>
+                    <button class="btn btn-warning" type="button" onclick="updateTestForm(0)">
+                        Lưu Nháp
+                    </button>
+                    <button class="btn btn-primary" type="button" onclick="updateTestForm(1)">
+                        Kích Hoạt
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD USER MODAL -->
+    <div class="modal-overlay" id="addUserModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Thêm Người Dùng Mới</div>
+                <div class="modal-close" onclick="closeModal('addUserModal')">×</div>
+            </div>
+
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label class="form-label">Họ và Tên *</label>
+                    <input id="hoTen" type="text" class="form-input" placeholder="VD: Nguyễn Văn A" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Kích Hoạt</label>
+                        <select id="xoa" class="form-input">
+                            <option value=0>Có</option>
+                            <option value=1>Không</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vai Trò</label>
+                        <select id="role" class="form-input">
+                            <option value="USER">Nhân viên</option>
+                            <option value="ADMIN">Quản trị viên</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Khoa/Phòng/TT</label>
+                    <select id="khoaPhongND" class="form-input">
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tài Khoản</label>
+                    <input id="taiKhoan" type="text" class="form-input" placeholder="VD: nguyenvana" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mật Khẩu</label>
+                    <input id="matKhau" type="password" class="form-input" placeholder="Tự động tạo nếu để trống">
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" onclick="closeModal('addUserModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu Người Dùng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD USER MODAL -->
+    <div class="modal-overlay" id="updateUserModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Cập nhật Người Dùng</div>
+                <div class="modal-close" onclick="closeModal('updateUserModal')">×</div>
+            </div>
+
+            <form id="updateUserForm">
+                <div class="form-group">
+                    <label class="form-label">Họ và Tên *</label>
+                    <input id="hoTenUpdate" type="text" class="form-input" placeholder="VD: Nguyễn Văn A" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Kích Hoạt</label>
+                        <select id="xoaUpdate" class="form-input">
+                            <option value=0>Có</option>
+                            <option value=1>Không</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vai Trò</label>
+                        <select id="roleUpdate" class="form-input">
+                            <option value="USER">Nhân viên</option>
+                            <option value="ADMIN">Quản trị viên</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Khoa/Phòng/TT</label>
+                    <select id="khoaPhongNDUpdate" class="form-input">
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tài Khoản</label>
+                    <input id="taiKhoanUpdate" type="text" class="form-input" placeholder="VD: nguyenvana" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mật Khẩu</label>
+                    <input id="matKhauUpdate" type="password" class="form-input"
+                        placeholder="Vui lòng nhập mật khẩu mới!">
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" onclick="closeModal('updateUserModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật Người Dùng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD DEPARTMENT MODAL -->
+    <div class="modal-overlay" id="addDeptModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Thêm Khoa/Phòng/TT Mới</div>
+                <div class="modal-close" onclick="closeModal('addDeptModal')">×</div>
+            </div>
+            <form id="addKPForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tên Khoa/Phòng/TT *</label>
+                        <input id="tenKhoaPhong" type="text" class="form-input" placeholder="VD: Phòng Marketing" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mã *</label>
+                        <input id="maKhoaPhong" type="text" class="form-input" placeholder="VD: MKT-009" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" onclick="closeModal('addDeptModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu Khoa/Phòng/TT</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- ADD DEPARTMENT MODAL -->
+    <div class="modal-overlay" id="updateDeptModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Cập nhật Khoa/Phòng/TT</div>
+                <div class="modal-close" onclick="closeModal('addDeptModal')">×</div>
+            </div>
+            <form id="updateKPForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Mã *</label>
+                        <input id="maKhoaPhongUpdate" type="text" class="form-input" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tên Khoa/Phòng/TT *</label>
+                        <input id="tenKhoaPhongUpdate" type="text" class="form-input" placeholder="VD: Phòng Marketing" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" onclick="closeModal('updateDeptModal')">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu Khoa/Phòng/TT</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- /content -->
 
     <!-- jQuery + DataTables -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -617,6 +932,11 @@
     <script src="api/qlqt_api.js"></script>
 
     <script src="api/qlch_api.js"></script>
+    <script src="api/qlbktr_api.js"></script>
+
+    <script src="api/qlnd_api.js"></script>
+
+    <script src="api/qlkp_api.js"></script>
 
     <script src="js/databaseDefaults.js"></script>
 </body>

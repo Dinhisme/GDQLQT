@@ -2,11 +2,11 @@ const pageMap = {
     dashboard: { title: 'Bảng Điều Khiển', sub: 'Tổng quan hệ thống' },
     qlqt: { title: 'Quản Lý Quy trình', sub: 'Quản lý / Quy trình' },
     qlch: { title: 'Quản Lý Câu Hỏi', sub: 'Quản lý / Câu hỏi' },
-    tests: { title: 'Quản Lý Bài Kiểm Tra', sub: 'Quản lý / Bài kiểm tra' },
-    categories: { title: 'Danh Mục', sub: 'Quản lý / Danh mục' },
-    results: { title: 'Kết Quả Thi', sub: 'Kết quả / Thống kê' },
+    qlbktr: { title: 'Quản Lý Bài Kiểm Tra', sub: 'Quản lý / Bài kiểm tra' },
+    qlkqthi: { title: 'Kết Quả Thi', sub: 'Kết quả / Thống kê' },
     reports: { title: 'Báo Cáo', sub: 'Kết quả / Báo cáo' },
-    users: { title: 'Người Dùng', sub: 'Hệ thống / Người dùng' },
+    qlnd: { title: 'Người Dùng', sub: 'Hệ thống / Người dùng' },
+    qlkp: { title: 'Khoa / Phòng / TT', sub: 'Hệ thống / Khoa / Phòng / TT' },
     settings: { title: 'Cài Đặt', sub: 'Hệ thống / Cài đặt' },
 };
 
@@ -105,5 +105,21 @@ function loadPage(page) {
         case 'qlch':
             loadQLCHPage();
             break;
+        case 'qlbktr':
+            loadQLBKTPage();
+            break;
+        case 'qlnd':
+            loadQLNDPage();
+            break;
+        case 'qlkp':
+            loadQLKPPage();
+            break;
     }
+}
+
+// Logout function
+function logout() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+    window.location.href = '/login';
 }

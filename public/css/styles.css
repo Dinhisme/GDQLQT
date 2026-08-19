@@ -38,6 +38,10 @@ body {
     overflow-x: hidden;
 }
 
+.text-center {
+    text-align: center !important;
+}
+
 /* ── SIDEBAR ── */
 .sidebar {
     width: var(--sidebar-w);
@@ -441,9 +445,11 @@ body {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
+    margin-left: 5px;
 }
 
 .section-title {
+    text-transform: uppercase;
     font-family: var(--font-head);
     font-size: 18px;
     font-weight: 600;
@@ -515,6 +521,17 @@ body {
 .btn-ghost:hover {
     background: #eaf3ff;
     border-color: #3b82f6;
+}
+
+.btn-warning {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    color: #d18400;
+}
+
+.btn-warning:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(102, 65, 0, 0.45);
 }
 
 .btn-danger {
@@ -898,6 +915,12 @@ textarea.form-input {
 }
 
 .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.form-row-two {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
@@ -1607,6 +1630,11 @@ table.dataTable tbody td.dataTables_empty {
         gap: 0;
     }
 
+    .form-row-two {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
     .modal-footer {
         flex-wrap: wrap;
     }
@@ -1932,7 +1960,7 @@ table.dataTable tbody td.dataTables_empty {
 .test-meta-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 3px;
     font-size: 11.5px;
     color: #2563eb;
     opacity: 0.8;
@@ -2534,7 +2562,182 @@ table.dataTable tbody td.dataTables_empty {
     padding-left: 36px !important;
 }
 
+/* =========================================================
+   SELECT2 MULTIPLE
+   ========================================================= */
 
+/* ===== Ô select multiple ===== */
+.select2-container--default .select2-selection--multiple {
+    min-height: 42px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 4px 8px;
+    transition: all .2s ease;
+    cursor: pointer;
+}
+
+
+/* Hover */
+.select2-container--default .select2-selection--multiple:hover {
+    border-color: #3b82f6;
+}
+
+
+/* Focus */
+.select2-container--default.select2-container--focus .select2-selection--multiple,
+.select2-container--default.select2-container--open .select2-selection--multiple {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+}
+
+
+/* ===== Danh sách item đã chọn ===== */
+
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0;
+}
+
+
+/* ===== Tag / Item được chọn ===== */
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    color: #2563eb;
+    padding: 5px 8px 5px 26px;
+    margin: 2px 0;
+    font-size: 13px;
+    font-weight: 500;
+    position: relative;
+}
+
+
+/* ===== Nút X ===== */
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #2563eb !important;
+    border: none !important;
+    border-right: none !important;
+    font-size: 16px;
+    font-weight: bold;
+    position: absolute;
+    left: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0;
+}
+
+
+/* Hover nút X */
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+    background: transparent !important;
+    color: #dc2626 !important;
+}
+
+
+/* ===== Ô nhập khi search ===== */
+
+.select2-container--default .select2-selection--multiple .select2-search--inline {
+    margin: 2px 0;
+}
+
+
+.select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field {
+    height: 30px;
+    margin: 0;
+    padding: 7px 6px !important;
+    font-size: 14px;
+    outline: none;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+
+/* Placeholder */
+
+.select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field::placeholder {
+    color: #9ca3af;
+}
+
+
+/* ===== Dropdown ===== */
+
+.select2-dropdown {
+    border: 1px solid #dbe3f0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .12);
+}
+
+
+/* Search */
+
+.select2-search--dropdown {
+    padding: 10px;
+    background: #f8fafc;
+    position: relative;
+}
+
+
+.select2-search--dropdown .select2-search__field {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 8px 10px 8px 36px;
+    font-size: 14px;
+    outline: none;
+}
+
+
+.select2-search--dropdown .select2-search__field:focus {
+    border-color: #2563eb;
+}
+
+
+/* Icon search */
+
+.select2-search--dropdown::before {
+    content: "🔍";
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: .5;
+    z-index: 2;
+}
+
+
+/* ===== Option ===== */
+
+.select2-results__option {
+    padding: 10px 14px;
+    transition: background .15s;
+}
+
+
+/* Hover */
+
+.select2-results__option--highlighted.select2-results__option--selectable {
+    background: #2563eb !important;
+    color: white;
+}
+
+
+/* Selected */
+
+.select2-results__option--selected {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+/* ── COPY QUESTION MODAL ── */
 
 .copy-question-modal {
     width: 520px;

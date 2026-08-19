@@ -130,6 +130,8 @@ function createQuyTrinhRows(list) {
 //Đưa dữ liệu ra index
 function renderQLQTPage(quytrinhList) {
 
+    document.getElementById("sidebar-vanban").textContent = `${quytrinhList.length}`;
+
     const stats = getQuyTrinhStatistics(quytrinhList);
 
     const tableRows = createQuyTrinhRows(quytrinhList);
@@ -252,9 +254,11 @@ function filterQuyTrinh(type) {
         case "QUY_DINH":
             table.column(3).search('Quy Định').draw();
             break;
+
         case "QUYET_DINH":
             table.column(3).search('Quyết Định').draw();
             break;
+
         case "HUONG_DAN":
             table.column(3).search('Hướng Dẫn').draw();
             break;
@@ -350,6 +354,7 @@ async function submitQuyTrinhForm() {
         closeModal('addDocModal');
         clearAddDocForm();
         loadQLQTPage();
+
     } catch (error) {
         console.error('Error creating văn bản:', error);
         showToast('error', 'Cảnh báo!', `Lỗi khi gửi dữ liệu. Vui lòng thử lại!`);

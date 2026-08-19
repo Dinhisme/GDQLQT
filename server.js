@@ -25,6 +25,11 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
+  storage,
+  limits: { fileSize: 20 * 1024 * 1024 }
+});
+
+const uploadExcel = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 20 * 1024 * 1024 }
 });
@@ -718,7 +723,7 @@ app.delete("/api/cau-hoi/:id", async (req, res) => {
   }
 });
 
-app.post("/api/cau-hoi/import-excel", upload.single("file"), async (req, res) => {
+app.post("/api/cau-hoi/import-excel", uploadExcel.single("file"), async (req, res) => {
 
   try {
 
@@ -853,6 +858,645 @@ app.post("/api/cau-hoi/import-excel", upload.single("file"), async (req, res) =>
     });
   }
 
+});
+
+//API Quản lý bài kiểm tra
+app.get("/api/bai-kiem-tra", async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const resAPI = await fetch(`${javaBackendUrl}/bai-kiem-tra`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      }
+    });
+
+    if (!resAPI.ok) {
+      console.error(`❌ Java Backend error: ${resAPI.status}`);
+      return res.status(resAPI.status).json({
+        success: false,
+        message: resAPI.message,
+        error: await resAPI.text()
+      });
+    }
+
+    const javaResponse = await resAPI.json();
+
+    const dataList = Array.isArray(javaResponse) ? javaResponse :
+      (javaResponse.data && Array.isArray(javaResponse.data)) ? javaResponse.data :
+        [];
+
+    // console.log(`✅ Lấy danh sách dữ liệu thành công: ${dataList.length} items`);
+    return res.json({
+      success: true,
+      message: "Lấy danh sách bài kiểm tra thành công!",
+      data: dataList,
+      total: dataList.length
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.post("/api/bai-kiem-tra", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { tenBaiKiem, moTa, quyTrinhIds, khoaPhongIds, thoiGianLamBai, tronCauHoi, thoiGianBatDau, thoiGianKetThuc, trangThai } = req.body;
+
+    const formattedBody = {
+      tenBaiKiem,
+      moTa,
+      trangThai,
+      quyTrinhIds,
+      khoaPhongIds,
+      thoiGianLamBai,
+      tronCauHoi,
+      thoiGianBatDau,
+      thoiGianKetThuc
+    };
+
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+
+    const resAPI = await fetch(`${javaBackendUrl}/bai-kiem-tra`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    const javaResponse = await resAPI.json();
+
+    if (!resAPI.ok) {
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse.message,
+        error: javaResponse
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Tạo bài kiểm tra thành công!",
+      data: javaResponse
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.put("/api/bai-kiem-tra/:id", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+    const { id } = req.params;
+
+    const { tenBaiKiem, moTa, quyTrinhIds, khoaPhongIds, thoiGianLamBai, tronCauHoi, thoiGianBatDau, thoiGianKetThuc, trangThai } = req.body;
+
+    const formattedBody = {
+      tenBaiKiem,
+      moTa,
+      trangThai,
+      quyTrinhIds,
+      khoaPhongIds,
+      thoiGianLamBai,
+      tronCauHoi,
+      thoiGianBatDau,
+      thoiGianKetThuc
+    };
+
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+
+    const resAPI = await fetch(`${javaBackendUrl}/bai-kiem-tra/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    const javaResponse = await resAPI.json();
+
+    if (!resAPI.ok) {
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse.message,
+        error: javaResponse
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Cập nhật bài kiểm tra thành công!",
+      data: javaResponse
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.delete("/api/bai-kiem-tra/:id", async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const resAPI = await fetch(`${javaBackendUrl}/bai-kiem-tra/${id}`, {
+      method: "DELETE",
+      headers: {
+        'Authorization': authHeader
+      },
+    });
+
+    if (!resAPI.ok) {
+      const errorText = await resAPI.text();
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: errorText || "Không thể xóa bài kiểm tra"
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Xóa bài kiểm tra thành công!"
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+//API Người dùng
+app.get("/api/nguoi-dung", async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const resAPI = await fetch(`${javaBackendUrl}/nguoi-dung`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      }
+    });
+
+    if (!resAPI.ok) {
+      console.error(`❌ Java Backend error: ${resAPI.status}`);
+      return res.status(resAPI.status).json({
+        success: false,
+        message: resAPI.message,
+        error: await resAPI.text()
+      });
+    }
+
+    const javaResponse = await resAPI.json();
+
+    const dataList = Array.isArray(javaResponse) ? javaResponse :
+      (javaResponse.data && Array.isArray(javaResponse.data)) ? javaResponse.data :
+        [];
+
+    // console.log(`✅ Lấy danh sách dữ liệu thành công: ${dataList.length} items`);
+    return res.json({
+      success: true,
+      message: "Lấy danh sách người dùng thành công!",
+      data: dataList,
+      total: dataList.length
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.post("/api/nguoi-dung", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { hoTen, taiKhoan, matKhau, role, khoaPhong, xoa} = req.body;
+
+    const formattedBody = {
+      hoTen,
+      taiKhoan,
+      matKhau,
+      role,
+      khoaPhong,
+      xoa
+    };
+
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+
+    const resAPI = await fetch(`${javaBackendUrl}/nguoi-dung`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    const javaResponse = await resAPI.json();
+
+    if (!resAPI.ok) {
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse.message,
+        error: javaResponse
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Tạo người dùng thành công!",
+      data: javaResponse
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.put("/api/nguoi-dung/:id", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const { hoTen, matKhau, role, khoaPhong, xoa} = req.body;
+
+    const formattedBody = {
+      hoTen,
+      matKhau,
+      role,
+      khoaPhong,
+      xoa
+    };
+
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+
+    const resAPI = await fetch(`${javaBackendUrl}/nguoi-dung/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    const javaResponse = await resAPI.json();
+
+    if (!resAPI.ok) {
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse.message,
+        error: javaResponse
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Cập nhật người dùng thành công!",
+      data: javaResponse
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.delete("/api/nguoi-dung/:id", async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const resAPI = await fetch(`${javaBackendUrl}/nguoi-dung/${id}`, {
+      method: "DELETE",
+      headers: {
+        'Authorization': authHeader
+      },
+    });
+
+    if (!resAPI.ok) {
+      const errorText = await resAPI.text();
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: errorText || "Không thể xóa người dùng!"
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Xóa người dùng thành công!"
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+//API KHOA PHÒNG
+app.get("/api/khoa-phong", async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const resAPI = await fetch(`${javaBackendUrl}/khoa-phong`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      }
+    });
+
+    if (!resAPI.ok) {
+      console.error(`❌ Java Backend error: ${resAPI.status}`);
+      return res.status(resAPI.status).json({
+        success: false,
+        message: resAPI.message,
+        error: await resAPI.text()
+      });
+    }
+
+    const javaResponse = await resAPI.json();
+
+    const dataList = Array.isArray(javaResponse) ? javaResponse :
+      (javaResponse.data && Array.isArray(javaResponse.data)) ? javaResponse.data :
+        [];
+
+    // console.log(`✅ Lấy danh sách dữ liệu thành công: ${dataList.length} items`);
+    return res.json({
+      success: true,
+      message: "Lấy danh sách khoa phòng thành công!",
+      data: dataList,
+      total: dataList.length
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.post("/api/khoa-phong", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id, ten} = req.body;
+
+    const formattedBody = {
+      id,
+      ten
+    };
+
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+
+    const resAPI = await fetch(`${javaBackendUrl}/khoa-phong`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    const javaResponse = await resAPI.json();
+
+    if (!resAPI.ok) {
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse.message,
+        error: javaResponse
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Tạo khoa phòng thành công!",
+      data: javaResponse
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.put("/api/khoa-phong/:id", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+    const { ten} = req.body;
+
+    const formattedBody = {
+      ten
+    };
+
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+
+    const resAPI = await fetch(`${javaBackendUrl}/khoa-phong/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    const javaResponse = await resAPI.json();
+
+    if (!resAPI.ok) {
+      return res.status(resAPI.status).json({
+        success: false,
+        message: javaResponse.message,
+        error: javaResponse
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Cập nhật khoa phòng thành công!",
+      data: javaResponse
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.delete("/api/khoa-phong/:id", async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const resAPI = await fetch(`${javaBackendUrl}/khoa-phong/${id}`, {
+      method: "DELETE",
+      headers: {
+        'Authorization': authHeader
+      },
+    });
+
+    if (!resAPI.ok) {
+      const errorText = await resAPI.text();
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: errorText || "Không thể xóa khoa phòng!"
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Xóa khoa phòng thành công!"
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
 });
 
 // Start server
