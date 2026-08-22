@@ -51,7 +51,7 @@ async function loadQLCHPage() {
 async function fetchCauHoi() {
     const token = localStorage.getItem("authToken");
 
-    const response = await fetch("/api/cau-hoi", {
+    const response = await fetch("/api/cau-hoi/khoa-phong", {
         headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"

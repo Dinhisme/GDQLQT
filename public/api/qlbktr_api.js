@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // }
 });
 
-
 function formatDateTime(dateTime) {
     if (!dateTime) return "";
 
@@ -17,7 +16,17 @@ function formatDateTime(dateTime) {
     const [yyyy, MM, dd] = date.split("-");
     const [hh, mm] = time.split(":");
 
-    return `${hh}:${mm} ${dd}/${MM}/${yyyy}`;
+    let hour = parseInt(hh);
+    const minute = mm;
+
+    const period = hour >= 12 ? "Chiều" : "Sáng";
+
+    hour = hour % 12;
+    hour = hour === 0 ? 12 : hour;
+
+    const formattedHour = String(hour).padStart(2, "0");
+
+    return `${formattedHour}:${minute} ${period} ${dd}/${MM}/${yyyy}`;
 }
 
 //Load dữ liệu QLBKT
@@ -49,7 +58,7 @@ async function loadQLBKTPage() {
 async function fetchBaiKiemTra() {
     const token = localStorage.getItem("authToken");
 
-    const response = await fetch("/api/bai-kiem-tra", {
+    const response = await fetch("/api/bai-kiem-tra/khoa-phong", {
         headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
@@ -553,3 +562,5 @@ function filterTabBaiKiemTra(type) {
         createBaiKiemTraCards(list);
 
 }
+
+

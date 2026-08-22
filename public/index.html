@@ -43,27 +43,37 @@
                 <span class="nav-icon">🏠</span> Bảng Điều Khiển
             </div>
 
-            <div class="nav-section-label">Quản Lý</div>
-            <div class="nav-item" onclick="navigate('qlqt', this)">
-                <span class="nav-icon">📄</span> Văn Bản
-                <span class="nav-badge" id="sidebar-vanban"></span>
-            </div>
-            <div class="nav-item" onclick="navigate('qlch', this)">
-                <span class="nav-icon">❓</span> Câu Hỏi
-                <span class="nav-badge" id="sidebar-cauhoi"></span>
-            </div>
-            <div class="nav-item" onclick="navigate('qlbktr', this)">
-                <span class="nav-icon">📝</span> Bài Kiểm Tra
-                <span class="nav-badge" id="sidebar-baikiemtra"></span>
+            <div class="nav-item" id="searchNav" onclick="navigate('tracuu', this)">
+                <span class="nav-icon">🔍</span> Tra Cứu Văn Bản
             </div>
 
-            <div class="nav-section-label">Hệ Thống</div>
-            <div class="nav-item" onclick="navigate('qlnd', this)">
-                <span class="nav-icon">👥</span> Người Dùng
+            <div id="isADMIN" class="d-none">
+                <div class="nav-section-label ">Quản Lý</div>
+                <div class="nav-item" onclick="navigate('qlqt', this)">
+                    <span class="nav-icon">📄</span> Văn Bản
+                    <span class="nav-badge" id="sidebar-vanban"></span>
+                </div>
+                <div class="nav-item" onclick="navigate('qlch', this)">
+                    <span class="nav-icon">❓</span> Câu Hỏi
+                    <span class="nav-badge" id="sidebar-cauhoi"></span>
+                </div>
+                <div class="nav-item" onclick="navigate('qlbktr', this)">
+                    <span class="nav-icon">📝</span> Bài Kiểm Tra
+                    <span class="nav-badge" id="sidebar-baikiemtra"></span>
+                </div>
+                <div class="nav-item" onclick="navigate('qlkqthi', this)">
+                    <span class="nav-icon">🎯</span> Kết Quả
+                </div>
+
+                <div class="nav-section-label">Hệ Thống</div>
+                <div class="nav-item" onclick="navigate('qlnd', this)">
+                    <span class="nav-icon">👥</span> Người Dùng
+                </div>
+                <div class="nav-item" onclick="navigate('qlkp', this)">
+                    <span class="nav-icon">🏢</span> Khoa/Phòng/TT
+                </div>
             </div>
-            <div class="nav-item" onclick="navigate('qlkp', this)">
-                <span class="nav-icon">🏢</span> Khoa/Phòng/TT
-            </div>
+
             <div class="nav-section-label"></div>
             <div class="nav-item" onclick="logout()" style="font-weight: bold; color: white;">
                 <span class="nav-icon">⏻ </span> ĐĂNG XUẤT
@@ -96,7 +106,13 @@
                 <div class="page-title" id="pageTitle">Bảng Điều Khiển</div>
                 <div class="breadcrumb" id="breadcrumb">Tổng quan hệ thống</div>
             </div>
+
             <div class="header-actions">
+
+                <div class="search-box" onclick="navigate('tracuu', this)">
+                    <span class="search-icon">🔍</span>
+                    <!-- <input type="text" placeholder="Tìm kiếm..."> -->
+                </div>
                 <div class="user-card">
                     <div class="avatar" style="color: black !important;">
                         <div class="logo-form">
@@ -104,8 +120,9 @@
                         </div>
                     </div>
                     <div class="user-info">
-                        <div id="user-name" class="user-name" style="color: black !important;">xxxx</div>
-                        <div class="user-role" style="color: black !important;">Quản trị viên</div>
+                        <div id="user-name" class="user-name" style="color: black !important; font-weight: bold;">xxxx
+                        </div>
+                        <!-- <div class="user-role" style="color: black !important;">Quản trị viên</div> -->
                     </div>
                 </div>
             </div>
@@ -127,15 +144,15 @@
             <span class="mob-icon">📄</span>
             <span>Văn Bản</span>
         </div>
-        <div class="mob-nav-item" id="mob-questions" onclick="mobileNav('qlch', this)">
-            <span class="mob-icon">❓</span>
-            <span>Câu Hỏi</span>
+        <div class="mob-nav-item" id="mob-questions" onclick="mobileNav('tracuu', this)">
+            <span class="mob-icon">🔍</span>
+            <span>Tra Cứu</span>
         </div>
         <div class="mob-nav-item" id="mob-tests" onclick="mobileNav('qlbktr', this)">
             <span class="mob-icon">📝</span>
             <span>Kiểm Tra</span>
         </div>
-        <div class="mob-nav-item" id="mob-results" onclick="mobileNav('results', this)">
+        <div class="mob-nav-item" id="mob-results" onclick="mobileNav('qlkqthi', this)">
             <span class="mob-icon">📊</span>
             <span>Kết Quả</span>
         </div>
@@ -875,7 +892,8 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Tên Khoa/Phòng/TT *</label>
-                        <input id="tenKhoaPhong" type="text" class="form-input" placeholder="VD: Phòng Marketing" required>
+                        <input id="tenKhoaPhong" type="text" class="form-input" placeholder="VD: Phòng Marketing"
+                            required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Mã *</label>
@@ -889,7 +907,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- ADD DEPARTMENT MODAL -->
     <div class="modal-overlay" id="updateDeptModal">
         <div class="modal">
@@ -905,7 +923,8 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tên Khoa/Phòng/TT *</label>
-                        <input id="tenKhoaPhongUpdate" type="text" class="form-input" placeholder="VD: Phòng Marketing" required>
+                        <input id="tenKhoaPhongUpdate" type="text" class="form-input" placeholder="VD: Phòng Marketing"
+                            required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -913,6 +932,52 @@
                     <button type="submit" class="btn btn-primary">Lưu Khoa/Phòng/TT</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- EXAM START MODAL -->
+    <div class="modal-overlay" id="examModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Thông Tin Bài Kiểm Tra</div>
+                <div class="modal-close" onclick="closeModal('examModal')">×</div>
+            </div>
+            <div class="exam-info-block">
+                <div class="eib-title" id="detailTenBaiKiem">🚨 Kiểm Tra An Toàn Lao Động – Bắt Buộc</div>
+                <div class="eib-grid">
+                    <div class="eib-item">
+                        <div class="k">Số câu hỏi</div>
+                        <div class="v" id="detailSoCauHoi">30 câu</div>
+                    </div>
+                    <div class="eib-item">
+                        <div class="k">Thời gian</div>
+                        <div class="v" id="detailThoiGianLamBai">45 phút</div>
+                    </div>
+                    <div class="eib-item">
+                        <div class="k">Thời gian bắt đầu</div>
+                        <div class="v" style="color:#ef4444;font-weight:600;" id="detailThoiGianBatDau">13/06/2026</div>
+                    </div>
+                    <div class="eib-item">
+                        <div class="k">Thời gian kết thúc</div>
+                        <div class="v" style="color:#ef4444;font-weight:600;" id="detailThoiGianKetThuc">13/06/2026
+                        </div>
+                    </div>
+                </div>
+                <div class="eib-item" style="margin-top: 5px;">
+                    <div class="k">Phạm vi</div>
+                    <div class="v" id="detailKhoaPhongThamGia">Toàn công ty</div>
+                </div>
+            </div>
+            <div class="rule-list">
+                <h4>📌 Lưu ý trước khi thi</h4>
+                <div class="rule-item">Đồng hồ đếm ngược sẽ bắt đầu ngay khi bạn nhấn "Bắt đầu thi".</div>
+                <div class="rule-item">Không được phép thoát khỏi trang trong khi đang thi.</div>
+                <div class="rule-item">Kết quả sẽ được ghi nhận ngay sau khi nộp bài hoặc hết giờ.</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('examModal')">Để Sau</button>
+                <button class="btn btn-primary" onclick="batDauLamBai()">🚀 Bắt Đầu Thi Ngay</button>
+            </div>
         </div>
     </div>
 
@@ -926,7 +991,7 @@
 
     <script src="js/index.js"></script>
     <script src="api/dashboard_api.js"></script>
-
+    <script src="api/tracuu_api.js"></script>
 
     <script src="js/qlqt.js"></script>
     <script src="api/qlqt_api.js"></script>
@@ -937,6 +1002,11 @@
     <script src="api/qlnd_api.js"></script>
 
     <script src="api/qlkp_api.js"></script>
+
+    <script src="api/qlkqt_api.js"></script>
+
+
+    <!-- <script src="api/baithi_api.js"></script> -->
 
     <script src="js/databaseDefaults.js"></script>
 </body>

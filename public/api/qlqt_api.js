@@ -44,7 +44,7 @@ async function loadQLQTPage() {
 async function fetchQuyTrinh() {
     const token = localStorage.getItem("authToken");
 
-    const response = await fetch("/api/quy-trinh", {
+    const response = await fetch("/api/quy-trinh/khoa-phong", {
         headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"

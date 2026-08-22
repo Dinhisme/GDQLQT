@@ -1,5 +1,6 @@
 const pageMap = {
     dashboard: { title: 'Bảng Điều Khiển', sub: 'Tổng quan hệ thống' },
+    tracuu: { title: 'Tra Cứu Văn Bản', sub: 'Tra Cứu Nhanh Chóng Văn Bản' },
     qlqt: { title: 'Quản Lý Quy trình', sub: 'Quản lý / Quy trình' },
     qlch: { title: 'Quản Lý Câu Hỏi', sub: 'Quản lý / Câu hỏi' },
     qlbktr: { title: 'Quản Lý Bài Kiểm Tra', sub: 'Quản lý / Bài kiểm tra' },
@@ -11,9 +12,16 @@ const pageMap = {
 };
 
 function navigate(page, el) {
+
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    if (el.classList == 'search-box' || el.classList == 'search-box active') {
+        document.getElementById('searchNav').classList.add('active');
+    }
+
     el.classList.add('active');
+
     const info = pageMap[page];
     document.getElementById('pageTitle').textContent = info.title;
     document.getElementById('breadcrumb').textContent = info.sub;
@@ -91,6 +99,11 @@ function showToast(type, title, message, duration = 3000) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    const role = localStorage.getItem('role');
+    if(role ==='ADMIN'){
+        document.getElementById('isADMIN').classList.remove('d-none');
+    }
+
     loadDashboardPage();
 });
 
@@ -98,6 +111,9 @@ function loadPage(page) {
     switch (page) {
         case 'dashboard':
             loadDashboardPage();
+            break;
+        case 'tracuu':
+            loadTimKiemPage();
             break;
         case 'qlqt':
             loadQLQTPage();
@@ -107,6 +123,9 @@ function loadPage(page) {
             break;
         case 'qlbktr':
             loadQLBKTPage();
+            break;
+        case 'qlkqthi':
+            loadQLKQPage();
             break;
         case 'qlnd':
             loadQLNDPage();

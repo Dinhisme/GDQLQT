@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BVPSTPCT – Hệ Thống Quản Lý</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/baithi.css">
+
+</head>
+
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ═══════════════ TOPBAR ═══════════════ -->
+    <header class="topbar">
+        <div class="tb-brand">
+            <div class="tb-logo">📋</div>
+            <div class="tb-name">BVPSTPCT</div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="tb-progress">
+            <div class="tb-prog-labels">
+                <span class="tb-prog-text"></span>
+                <span class="tb-prog-frac" id="progFrac">0 / 15 câu</span>
+            </div>
+            <div class="tb-prog-track">
+                <div class="tb-prog-fill" id="progFill" style="width:0%"></div>
+            </div>
+        </div>
+
+        <!-- Countdown -->
+        <div class="tb-timer" id="timerBox">
+            <span class="timer-icon">⏱</span>
+            <div>
+                <div class="timer-display" id="timerDisplay">45:00</div>
+                <div class="timer-label">còn lại</div>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="tb-submit">
+            <button class="btn-submit" onclick="openConfirm()">Nộp Bài ↗</button>
+        </div>
+    </header>
+
+    <!-- ═══════════════ LAYOUT ═══════════════ -->
+    <div id="mainBaiThi" class="layout">
+
+    </div>
+
+    <!-- ═══════════ CONFIRM MODAL ═══════════ -->
+    <div class="overlay" id="confirmOverlay">
+        <div class="modal modal-sm">
+            <div class="modal-head">
+                <div class="modal-title">Xác Nhận Nộp Bài</div>
+                <div class="modal-close" onclick="closeConfirm()">×</div>
+            </div>
+            <p style="font-size:13.5px;color:rgba(13,31,60,.7);line-height:1.6;margin-bottom:16px;">
+                Bạn có chắc chắn muốn nộp bài? Sau khi nộp, bạn sẽ không thể thay đổi câu trả lời.
+            </p>
+            <div class="confirm-stats">
+                <div class="cs-item">
+                    <div class="cs-num" id="cs-answered" style="color:#059669;">0</div>
+                    <div class="cs-lbl">Đã trả lời</div>
+                </div>
+                <div class="cs-item">
+                    <div class="cs-num" id="cs-flagged" style="color:#d97706;">0</div>
+                    <div class="cs-lbl">Đánh dấu</div>
+                </div>
+                <div class="cs-item">
+                    <div class="cs-num" id="cs-empty" style="color:#94a3b8;">15</div>
+                    <div class="cs-lbl">Chưa làm</div>
+                </div>
+            </div>
+            <div class="confirm-warn" id="confirmWarn" style="display:none;">
+                ⚠ Bạn vẫn còn <strong id="warnCount">0</strong> câu chưa trả lời. Hãy kiểm tra lại!
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeConfirm()">Quay Lại Làm Bài</button>
+                <button class="btn btn-primary" onclick="submitExam()">✓ Nộp Bài Ngay</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="api/baithi_api.js"></script>
+    <script src="api/login_api.js"></script>
+
+</body>
+
+</html>

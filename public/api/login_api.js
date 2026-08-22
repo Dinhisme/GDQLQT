@@ -63,8 +63,8 @@ form.addEventListener('submit', async function (e) {
     if (!usernameVal) { setError(usernameField, 'Vui lòng nhập username của bạn.'); valid = false; }
     else { setError(usernameField, ''); }
 
-    if (!passVal) { setError(passwordField, 'Vui lòng nhập mật khẩu.'); valid = false; }
-    else { setError(passwordField, ''); }
+    // if (!passVal) { setError(passwordField, 'Vui lòng nhập mật khẩu.'); valid = false; }
+    // else { setError(passwordField, ''); }
 
     if (!valid) return;
 
@@ -92,12 +92,17 @@ form.addEventListener('submit', async function (e) {
         if (data.success) {
             const userData = data.user.hoTen || {};
             const token = data.token;
+            const userDepartment = data.user.khoaPhong;
+
+            localStorage.setItem('role', data.user.role);
 
             // Store token
             localStorage.setItem('authToken', token);
 
             // Store user data
             localStorage.setItem('user', userData);
+
+            localStorage.setItem('userDepartment', userDepartment);
 
             showToast('success', 'Thành công!', `Chào mừng ${userData}!`);
 
