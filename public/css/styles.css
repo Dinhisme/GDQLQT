@@ -670,6 +670,12 @@ tr:hover td {
     border: 1px solid rgba(217, 119, 6, 0.2);
 }
 
+.badge-orange {
+    background: rgba(220, 105, 38, 0.08);
+    color: #dc7e26;
+    border: 1px solid rgba(220, 111, 38, 0.15);
+}
+
 .badge-red {
     background: rgba(220, 38, 38, 0.08);
     color: #dc2626;
@@ -1930,6 +1936,35 @@ table.dataTable tbody td.dataTables_empty {
     transform: scale(1.2);
 }
 
+.hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.ht-pass {
+    background: rgba(52, 211, 153, 0.2);
+    color: #6ee7b7;
+    border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.ht-fail {
+    background: rgba(252, 165, 165, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(252, 165, 165, 0.35);
+}
+
+.ht-pending {
+    background: rgba(253, 230, 138, 0.2);
+    color: #fde68a;
+    border: 1px solid rgba(253, 230, 138, 0.35);
+}
+
 /* Toast Notification Styles */
 .toast-container {
     position: fixed;
@@ -2875,6 +2910,12 @@ table.dataTable tbody td.dataTables_empty {
     border: 1px solid rgba(217, 119, 6, 0.2);
 }
 
+.b-orange {
+    background: rgba(217, 55, 6, 0.1);
+    color: #d94906;
+    border: 1px solid rgba(217, 55, 6, 0.2);
+}
+
 .b-red {
     background: rgba(220, 38, 38, 0.08);
     color: #dc2626;
@@ -3058,6 +3099,12 @@ table.dataTable tbody td.dataTables_empty {
     background: rgba(5, 150, 105, 0.07);
 }
 
+.rm-score.yellow {
+    color: #dca826;
+    border-color: #dca826;
+    background: rgb(220, 172, 38, 0.06);
+}
+
 .rm-score.fail {
     color: #dc2626;
     border-color: #dc2626;
@@ -3122,6 +3169,7 @@ table.dataTable tbody td.dataTables_empty {
 .sh-hero-title {
     font-family: var(--font-head);
     font-size: 26px;
+    font-weight: 600;
     color: #fff;
     margin-bottom: 6px;
     position: relative;

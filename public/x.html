@@ -1,0 +1,2748 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duyệt Kết Quả Thi – VănBản Pro</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css">
+    <style>
+        :root {
+            --cobalt: #2563eb;
+            --azure: #3b82f6;
+            --sky: #1d4ed8;
+            --fh: 'Playfair Display', serif;
+            --fb: 'DM Sans', sans-serif;
+            --r: 14px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--fb);
+            background: #f0f7ff;
+            color: #0d1f3c;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.25);
+            border-radius: 2px;
+        }
+
+        /* ════ LAYOUT ════ */
+        .page {
+            padding: 28px;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        /* ════ TOPBAR ════ */
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.13);
+            box-shadow: 0 2px 12px rgba(37, 99, 235, 0.07);
+            padding: 0 28px;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tb-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2563eb;
+            font-size: 13.5px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 7px 12px;
+            border-radius: 8px;
+            transition: background 0.18s;
+            text-decoration: none;
+        }
+
+        .tb-back:hover {
+            background: #eaf3ff;
+        }
+
+        .tb-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(59, 130, 246, 0.18);
+        }
+
+        .tb-title {
+            font-family: var(--fh);
+            font-size: 17px;
+            font-weight: 600;
+            color: #0d1f3c;
+        }
+
+        .tb-right {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* ════ BUTTONS ════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-family: var(--fb);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-ghost {
+            background: #fff;
+            border: 1.5px solid rgba(59, 130, 246, 0.22);
+            color: #2563eb;
+        }
+
+        .btn-ghost:hover {
+            background: #eaf3ff;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(5, 150, 105, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc2626, #f87171);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.28);
+        }
+
+        .btn-sm {
+            padding: 7px 14px;
+            font-size: 12.5px;
+        }
+
+        /* ════ BADGE ════ */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 500;
+        }
+
+        .b-green {
+            background: rgba(5, 150, 105, 0.1);
+            color: #059669;
+            border: 1px solid rgba(5, 150, 105, 0.22);
+        }
+
+        .b-red {
+            background: rgba(220, 38, 38, 0.08);
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.18);
+        }
+
+        .b-blue {
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .b-yellow {
+            background: rgba(217, 119, 6, 0.1);
+            color: #d97706;
+            border: 1px solid rgba(217, 119, 6, 0.22);
+        }
+
+        .b-purple {
+            background: rgba(99, 102, 241, 0.09);
+            color: #6366f1;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .b-grey {
+            background: rgba(100, 116, 139, 0.1);
+            color: #64748b;
+            border: 1px solid rgba(100, 116, 139, 0.2);
+        }
+
+        /* ════ CARDS ════ */
+        .card {
+            background: #fff;
+            border: 1px solid rgba(59, 130, 246, 0.14);
+            border-radius: var(--r);
+            box-shadow: 0 2px 12px rgba(37, 99, 235, 0.05);
+        }
+
+        .card-pad {
+            padding: 22px 24px;
+        }
+
+        .card-title {
+            font-family: var(--fh);
+            font-size: 15px;
+            font-weight: 600;
+            color: #0d1f3c;
+            margin-bottom: 3px;
+        }
+
+        .card-sub {
+            font-size: 12px;
+            color: #2563eb;
+            opacity: 0.7;
+            margin-bottom: 18px;
+        }
+
+        /* ════ HERO SECTION ════ */
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+            border-radius: 18px;
+            padding: 28px 32px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 22px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            right: 100px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .hero-left {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-exam {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .hero-name {
+            font-family: var(--fh);
+            font-size: 22px;
+            color: #fff;
+            margin-bottom: 10px;
+            line-height: 1.35;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.78);
+        }
+
+        .hero-right {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .hero-score {
+            font-family: var(--fh);
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .score-pass {
+            color: #6ee7b7;
+        }
+
+        .score-fail {
+            color: #fca5a5;
+        }
+
+        .hero-score-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.65);
+            margin-top: 4px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .ht-pass {
+            background: rgba(52, 211, 153, 0.2);
+            color: #6ee7b7;
+            border: 1px solid rgba(52, 211, 153, 0.35);
+        }
+
+        .ht-fail {
+            background: rgba(252, 165, 165, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(252, 165, 165, 0.35);
+        }
+
+        .ht-pending {
+            background: rgba(253, 230, 138, 0.2);
+            color: #fde68a;
+            border: 1px solid rgba(253, 230, 138, 0.35);
+        }
+
+        /* ════ STATUS BANNER ════ */
+        .status-banner {
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            border: 1.5px solid;
+        }
+
+        .sb-pending {
+            background: rgba(253, 230, 138, 0.12);
+            border-color: rgba(217, 119, 6, 0.3);
+        }
+
+        .sb-approved {
+            background: rgba(5, 150, 105, 0.08);
+            border-color: rgba(5, 150, 105, 0.25);
+        }
+
+        .sb-rejected {
+            background: rgba(220, 38, 38, 0.06);
+            border-color: rgba(220, 38, 38, 0.2);
+        }
+
+        .sb-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .sb-text {
+            flex: 1;
+        }
+
+        .sb-text strong {
+            font-size: 14px;
+            color: #0d1f3c;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .sb-text span {
+            font-size: 12.5px;
+            color: rgba(13, 31, 60, 0.6);
+        }
+
+        .sb-actions {
+            display: flex;
+            gap: 9px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        /* ════ 3-COL INFO ════ */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .info-card {
+            padding: 18px 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 9px 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.07);
+            gap: 10px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .info-key {
+            font-size: 12px;
+            color: rgba(13, 31, 60, 0.55);
+            flex-shrink: 0;
+        }
+
+        .info-val {
+            font-size: 13px;
+            font-weight: 500;
+            color: #0d1f3c;
+            text-align: right;
+        }
+
+        /* ════ STAT STRIP ════ */
+        .stat-strip {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .stat-mini {
+            padding: 16px 14px;
+            text-align: center;
+        }
+
+        .stat-mini .num {
+            font-family: var(--fh);
+            font-size: 26px;
+            font-weight: 700;
+            color: #0d1f3c;
+            line-height: 1;
+        }
+
+        .stat-mini .lbl {
+            font-size: 11px;
+            color: #2563eb;
+            opacity: 0.72;
+            margin-top: 5px;
+        }
+
+        .stat-mini .num.green {
+            color: #059669;
+        }
+
+        .stat-mini .num.red {
+            color: #dc2626;
+        }
+
+        .stat-mini .num.amber {
+            color: #d97706;
+        }
+
+        .stat-mini .num.blue {
+            color: #2563eb;
+        }
+
+        .stat-mini .num.purple {
+            color: #6366f1;
+        }
+
+        /* ════ TABS ════ */
+        .tab-bar {
+            display: flex;
+            gap: 5px;
+            background: #fff;
+            border: 1px solid rgba(59, 130, 246, 0.14);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 18px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tab-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 8px 18px;
+            border-radius: 7px;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: rgba(13, 31, 60, 0.55);
+            font-family: var(--fb);
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #fff;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.28);
+        }
+
+        .tab:hover:not(.active) {
+            color: #0d1f3c;
+            background: #eaf3ff;
+        }
+
+        .tab-page {
+            display: none;
+        }
+
+        .tab-page.active {
+            display: block;
+            animation: fi 0.2s ease;
+        }
+
+        @keyframes fi {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ════ QUESTION REVIEW LIST ════ */
+        .q-review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .q-review-card {
+            background: #fff;
+            border: 1px solid rgba(59, 130, 246, 0.13);
+            border-radius: 13px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.04);
+            transition: box-shadow 0.2s;
+        }
+
+        .q-review-card:hover {
+            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.1);
+        }
+
+        .q-review-card.q-correct {
+            border-left: 4px solid #059669;
+        }
+
+        .q-review-card.q-wrong {
+            border-left: 4px solid #dc2626;
+        }
+
+        .q-review-card.q-skip {
+            border-left: 4px solid #94a3b8;
+        }
+
+        .qr-header {
+            padding: 13px 18px;
+            background: #f8fbff;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.09);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .qr-num {
+            font-size: 12px;
+            font-weight: 700;
+            color: #2563eb;
+            background: rgba(37, 99, 235, 0.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .qr-topic {
+            font-size: 11.5px;
+            color: #2563eb;
+            opacity: 0.7;
+        }
+
+        .qr-result {
+            margin-left: auto;
+        }
+
+        .qr-body {
+            padding: 16px 18px;
+        }
+
+        .qr-question {
+            font-size: 14px;
+            font-weight: 500;
+            color: #0d1f3c;
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        .qr-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .qr-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 9px;
+            border: 1.5px solid rgba(59, 130, 246, 0.12);
+            background: #fafcff;
+            font-size: 13.5px;
+            color: rgba(13, 31, 60, 0.75);
+            transition: all 0.15s;
+        }
+
+        .qr-option.opt-correct {
+            border-color: rgba(5, 150, 105, 0.35);
+            background: rgba(5, 150, 105, 0.06);
+            color: #065f46;
+        }
+
+        .qr-option.opt-wrong {
+            border-color: rgba(220, 38, 38, 0.3);
+            background: rgba(220, 38, 38, 0.05);
+            color: #991b1b;
+        }
+
+        .qr-option.opt-chosen-wrong {
+            border-color: rgba(220, 38, 38, 0.4);
+            background: rgba(220, 38, 38, 0.08);
+        }
+
+        .opt-lbl {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11.5px;
+            font-weight: 700;
+            border: 1.5px solid rgba(59, 130, 246, 0.2);
+            color: #2563eb;
+            background: #f0f7ff;
+        }
+
+        .qr-option.opt-correct .opt-lbl {
+            background: #059669;
+            color: #fff;
+            border-color: #059669;
+        }
+
+        .qr-option.opt-wrong .opt-lbl {
+            background: #dc2626;
+            color: #fff;
+            border-color: #dc2626;
+        }
+
+        .opt-icon {
+            margin-left: auto;
+            font-size: 16px;
+            flex-shrink: 0;
+            padding-top: 4px;
+        }
+
+        .qr-explain {
+            margin-top: 14px;
+            padding: 13px 15px;
+            background: rgba(5, 150, 105, 0.06);
+            border: 1px solid rgba(5, 150, 105, 0.18);
+            border-radius: 9px;
+            font-size: 13px;
+            color: #065f46;
+            line-height: 1.55;
+        }
+
+        .qr-explain strong {
+            color: #059669;
+        }
+
+        /* Manual score input */
+        .qr-score-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(59, 130, 246, 0.08);
+            flex-wrap: wrap;
+        }
+
+        .qr-score-label {
+            font-size: 12.5px;
+            color: rgba(13, 31, 60, 0.6);
+        }
+
+        .qr-score-input {
+            width: 80px;
+            padding: 6px 10px;
+            border-radius: 7px;
+            border: 1.5px solid rgba(59, 130, 246, 0.22);
+            background: #f5f9ff;
+            color: #0d1f3c;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--fb);
+            outline: none;
+            text-align: center;
+            transition: all 0.18s;
+        }
+
+        .qr-score-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .qr-override-btns {
+            display: flex;
+            gap: 7px;
+        }
+
+        .qr-btn-correct {
+            background: rgba(5, 150, 105, 0.1);
+            color: #059669;
+            border: 1px solid rgba(5, 150, 105, 0.25);
+            padding: 5px 12px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .qr-btn-correct:hover {
+            background: rgba(5, 150, 105, 0.2);
+        }
+
+        .qr-btn-wrong {
+            background: rgba(220, 38, 38, 0.08);
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            padding: 5px 12px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .qr-btn-wrong:hover {
+            background: rgba(220, 38, 38, 0.15);
+        }
+
+        .qr-override-note {
+            font-size: 11px;
+            color: #d97706;
+            display: none;
+        }
+
+        .qr-override-note.show {
+            display: inline;
+        }
+
+        /* ════ DATATABLES ════ */
+        .table-card {
+            background: #fff;
+            border: 1px solid rgba(59, 130, 246, 0.14);
+            border-radius: var(--r);
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.05);
+        }
+
+        .dataTables_wrapper {
+            font-family: var(--fb);
+            color: #0d1f3c;
+        }
+
+        .dataTables_wrapper .dataTables_top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 16px 10px;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            background: #f5f9ff;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .dataTables_wrapper .dataTables_length {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(13, 31, 60, 0.6);
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            padding: 5px 26px 5px 10px;
+            border: 1px solid rgba(59, 130, 246, 0.22);
+            border-radius: 7px;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232563eb'/%3E%3C/svg%3E") no-repeat right 8px center;
+            background-size: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            color: #0d1f3c;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .dataTables_wrapper .dataTables_filter {
+            display: flex;
+            align-items: center;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            padding: 7px 12px 7px 32px;
+            border: 1px solid rgba(59, 130, 246, 0.22);
+            border-radius: 8px;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' fill='none' stroke='%232563eb' stroke-width='2'%3E%3Ccircle cx='5.5' cy='5.5' r='3.5'/%3E%3Cpath d='M9 9l2.5 2.5'/%3E%3C/svg%3E") no-repeat 9px center;
+            color: #0d1f3c;
+            font-size: 13px;
+            outline: none;
+            width: 190px;
+            transition: all 0.2s;
+        }
+
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            width: 230px;
+        }
+
+        .dataTables_wrapper .dataTables_filter label>span {
+            display: none;
+        }
+
+        table.dataTable {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 0 !important;
+        }
+
+        table.dataTable thead th {
+            padding: 12px 16px !important;
+            font-size: 10.5px !important;
+            font-weight: 600 !important;
+            letter-spacing: 1px !important;
+            text-transform: uppercase !important;
+            color: #2563eb !important;
+            background: #eaf3ff !important;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.14) !important;
+            border-top: none !important;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc {
+            background-image: none !important;
+            position: relative;
+            padding-right: 24px !important;
+        }
+
+        table.dataTable thead .sorting::after,
+        table.dataTable thead .sorting_asc::after,
+        table.dataTable thead .sorting_desc::after {
+            position: absolute;
+            right: 7px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            opacity: .38;
+            content: '⇅';
+        }
+
+        table.dataTable thead .sorting_asc::after {
+            content: '↑';
+            opacity: 1;
+            color: #2563eb;
+        }
+
+        table.dataTable thead .sorting_desc::after {
+            content: '↓';
+            opacity: 1;
+            color: #2563eb;
+        }
+
+        table.dataTable tbody tr {
+            border-bottom: 1px solid rgba(59, 130, 246, 0.07) !important;
+            transition: background .14s;
+        }
+
+        table.dataTable tbody tr:last-child {
+            border-bottom: none !important;
+        }
+
+        table.dataTable tbody tr:hover td {
+            background: #eaf3ff !important;
+        }
+
+        table.dataTable tbody td {
+            padding: 12px 16px !important;
+            font-size: 13px !important;
+            color: rgba(13, 31, 60, 0.75) !important;
+            border-top: none !important;
+            vertical-align: middle;
+        }
+
+        table.dataTable.stripe tbody tr.odd td {
+            background: #f8fbff;
+        }
+
+        .dataTables_wrapper .dataTables_bottom-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-top: 1px solid rgba(59, 130, 246, 0.08);
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #fff;
+            border-radius: 0 0 14px 14px;
+        }
+
+        .dataTables_wrapper .dataTables_info {
+            font-size: 12px;
+            color: #2563eb;
+            opacity: .6;
+        }
+
+        .dataTables_wrapper .dataTables_paginate {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            min-width: 30px;
+            height: 30px;
+            border-radius: 7px !important;
+            border: 1px solid rgba(59, 130, 246, 0.16) !important;
+            background: #eaf3ff !important;
+            color: #2563eb !important;
+            font-size: 12.5px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            padding: 0 8px !important;
+            transition: all .16s !important;
+            box-shadow: none !important;
+        }
+
+        table.dataTable.no-footer {
+            border-bottom: none !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #d6eaff !important;
+            border-color: #3b82f6 !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+            border-color: #2563eb !important;
+            color: #fff !important;
+            font-weight: 600 !important;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, .3) !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+            opacity: .32 !important;
+            cursor: default !important;
+        }
+
+        .col-name {
+            color: #0d1f3c;
+            font-weight: 500;
+        }
+
+        .col-name small {
+            display: block;
+            font-size: 11px;
+            color: #2563eb;
+            opacity: .62;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        /* ════ SCORE CIRCLE ════ */
+        .score-ring {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--fh);
+            font-size: 14px;
+            font-weight: 700;
+            border: 2.5px solid;
+            flex-shrink: 0;
+        }
+
+        .sr-pass {
+            color: #059669;
+            border-color: #059669;
+            background: rgba(5, 150, 105, 0.08);
+        }
+
+        .sr-fail {
+            color: #dc2626;
+            border-color: #dc2626;
+            background: rgba(220, 38, 38, 0.07);
+        }
+
+        .sr-pend {
+            color: #d97706;
+            border-color: #d97706;
+            background: rgba(217, 119, 6, 0.08);
+        }
+
+        /* ════ ACTIVITY LOG ════ */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .act-item {
+            display: flex;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.07);
+        }
+
+        .act-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .act-dot-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .act-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .act-line {
+            width: 2px;
+            flex: 1;
+            background: rgba(59, 130, 246, 0.1);
+            margin-top: 4px;
+        }
+
+        .act-item:last-child .act-line {
+            display: none;
+        }
+
+        .act-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .act-title {
+            font-size: 13.5px;
+            color: #0d1f3c;
+            font-weight: 500;
+            line-height: 1.45;
+        }
+
+        .act-title span {
+            color: #2563eb;
+        }
+
+        .act-time {
+            font-size: 11px;
+            color: rgba(13, 31, 60, 0.45);
+            margin-top: 3px;
+        }
+
+        .act-by {
+            font-size: 11.5px;
+            color: rgba(13, 31, 60, 0.55);
+            margin-top: 2px;
+        }
+
+        /* ════ NOTE BOX ════ */
+        .note-box {
+            background: #f5f9ff;
+            border: 1.5px solid rgba(59, 130, 246, 0.18);
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .note-label {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 8px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+
+        .note-textarea {
+            width: 100%;
+            resize: vertical;
+            min-height: 90px;
+            padding: 10px 13px;
+            border-radius: 8px;
+            border: 1.5px solid rgba(59, 130, 246, 0.2);
+            background: #fff;
+            color: #0d1f3c;
+            font-size: 13.5px;
+            font-family: var(--fb);
+            outline: none;
+            transition: all .2s;
+            line-height: 1.55;
+        }
+
+        .note-textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* ════ MODAL ════ */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 31, 60, 0.42);
+            backdrop-filter: blur(7px);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .overlay.open {
+            display: flex;
+            animation: fi .2s ease;
+        }
+
+        .modal {
+            background: #fff;
+            border: 1px solid rgba(59, 130, 246, 0.18);
+            border-radius: 20px;
+            padding: 28px;
+            width: 100%;
+            box-shadow: 0 24px 64px rgba(37, 99, 235, 0.14);
+            animation: su .25s cubic-bezier(.4, 0, .2, 1);
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        @keyframes su {
+            from {
+                transform: translateY(20px);
+                opacity: 0
+            }
+
+            to {
+                transform: none;
+                opacity: 1
+            }
+        }
+
+        .modal-sm {
+            max-width: 420px;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .modal-title {
+            font-family: var(--fh);
+            font-size: 19px;
+            color: #0d1f3c;
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            background: #f0f7ff;
+            border: 1px solid rgba(59, 130, 246, 0.14);
+            color: #2563eb;
+            font-size: 17px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .18s;
+        }
+
+        .modal-close:hover {
+            background: rgba(220, 38, 38, .08);
+            color: #dc2626;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding-top: 18px;
+            border-top: 1px solid rgba(59, 130, 246, .1);
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .modal-footer .btn {
+            min-width: 110px;
+            justify-content: center;
+        }
+
+        /* ════ TOAST ════ */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            border-radius: 12px;
+            padding: 13px 20px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 13.5px;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+            z-index: 400;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all .35s cubic-bezier(.4, 0, .2, 1);
+            max-width: 320px;
+        }
+
+        .toast.show {
+            transform: none;
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #059669, #10b981);
+            box-shadow: 0 8px 24px rgba(5, 150, 105, 0.4);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #dc2626, #f87171);
+            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.35);
+        }
+
+        /* ════ PROGRESS BAR ════ */
+        .prog-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prog-track {
+            flex: 1;
+            height: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .prog-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width .5s ease;
+        }
+
+        .pf-green {
+            background: linear-gradient(90deg, #059669, #10b981);
+        }
+
+        .pf-red {
+            background: linear-gradient(90deg, #dc2626, #f87171);
+        }
+
+        .pf-blue {
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+        }
+
+        .prog-pct {
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 36px;
+        }
+
+        /* ════ RESPONSIVE ════ */
+        @media (max-width:1100px) {
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat-strip {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width:768px) {
+            .page {
+                padding: 16px 12px 32px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-right {
+                text-align: left;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-strip {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .status-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .topbar {
+                padding: 0 14px;
+                height: 54px;
+            }
+
+            table.dataTable {
+                min-width: 560px;
+            }
+
+            .overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+
+            .modal {
+                border-radius: 18px 18px 0 0;
+                max-width: 100%;
+                padding: 22px 16px 28px;
+            }
+
+            .toast {
+                left: 12px;
+                right: 12px;
+                bottom: 16px;
+                max-width: none;
+            }
+        }
+
+        @media (max-width:480px) {
+            .stat-strip {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-score {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══════════ TOPBAR ══════════ -->
+    <header class="topbar">
+        <a class="tb-back" href="page-results.html">← Quay Lại</a>
+        <div class="tb-divider"></div>
+        <div class="tb-title">Chi Tiết & Duyệt Kết Quả Thi</div>
+        <div class="tb-right">
+            <button class="btn btn-ghost btn-sm">⬇ Xuất PDF</button>
+            <button class="btn btn-ghost btn-sm">🖨 In Phiếu</button>
+        </div>
+    </header>
+
+    <!-- ══════════ CONTENT ══════════ -->
+    <div class="page">
+
+        <!-- ── HERO ── -->
+        <div class="hero">
+            <div class="hero-left">
+                <div class="hero-exam">📝 BÀI KIỂM TRA</div>
+                <div class="hero-name">Kiểm Tra An Toàn Lao Động – Bắt Buộc 2026</div>
+                <div class="hero-meta">
+                    <div class="hero-meta-item">👤 <strong style="color:#fff;">Lê Văn C</strong></div>
+                    <div class="hero-meta-item">🏢 Phòng Kỹ Thuật</div>
+                    <div class="hero-meta-item">📅 12/06/2026 lúc 09:15</div>
+                    <div class="hero-meta-item">⏱ Làm trong 42 phút / 45 phút</div>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="hero-score score-pass" id="heroScore">87</div>
+                <div class="hero-score-sub">trên 100 điểm</div>
+                <div class="hero-tag ht-pending" id="heroTag">⏳ Chờ Duyệt</div>
+            </div>
+        </div>
+
+        <!-- ── STATUS BANNER ── -->
+        <div class="status-banner sb-pending" id="statusBanner">
+            <div class="sb-icon">⏳</div>
+            <div class="sb-text">
+                <strong id="sbTitle">Kết quả đang chờ duyệt điểm</strong>
+                <span id="sbDesc">Quản lý cần xem xét và xác nhận điểm số trước khi hệ thống ghi nhận chính thức.</span>
+            </div>
+            <div class="sb-actions" id="sbActions">
+                <button class="btn btn-success btn-sm" onclick="openApprove()">✓ Duyệt &amp; Xác Nhận</button>
+                <button class="btn btn-warning btn-sm" onclick="openOverride()">✏ Chỉnh Sửa Điểm</button>
+                <button class="btn btn-danger  btn-sm" onclick="openReject()">✕ Từ Chối</button>
+            </div>
+        </div>
+
+        <!-- ── INFO GRID ── -->
+        <div class="info-grid">
+            <div class="card card-pad info-card">
+                <div class="card-title">📋 Thông Tin Bài Thi</div>
+                <div style="height:8px"></div>
+                <div class="info-row"><span class="info-key">Mã phiên thi</span><span
+                        class="info-val">#KQ-2026-00142</span></div>
+                <div class="info-row"><span class="info-key">Bài kiểm tra</span><span class="info-val">An Toàn Lao Động
+                        – Bắt Buộc</span></div>
+                <div class="info-row"><span class="info-key">Quy trình</span><span class="info-val">ATLĐ-2024 ·
+                        PCCC-2022</span></div>
+                <div class="info-row"><span class="info-key">Tổng số câu</span><span class="info-val">15 câu</span>
+                </div>
+                <div class="info-row"><span class="info-key">Thời gian thi</span><span class="info-val">45 phút</span>
+                </div>
+                <div class="info-row"><span class="info-key">Ngưỡng đạt</span><span class="info-val"
+                        style="color:#059669;">80% (12/15 câu)</span></div>
+            </div>
+
+            <div class="card card-pad info-card">
+                <div class="card-title">👤 Thông Tin Người Thi</div>
+                <div style="height:8px"></div>
+                <div class="info-row"><span class="info-key">Họ và tên</span><span class="info-val">Lê Văn C</span>
+                </div>
+                <div class="info-row"><span class="info-key">Mã nhân viên</span><span class="info-val">NV-KT-0042</span>
+                </div>
+                <div class="info-row"><span class="info-key">Khoa / Phòng</span><span class="info-val">Phòng Kỹ
+                        Thuật</span></div>
+                <div class="info-row"><span class="info-key">Trưởng phòng</span><span class="info-val">Nguyễn Văn
+                        A</span></div>
+                <div class="info-row"><span class="info-key">Số lần thi</span><span class="info-val">Lần 1</span></div>
+                <div class="info-row"><span class="info-key">Điểm cao nhất</span><span class="info-val"
+                        style="color:#059669;">87 (lần này)</span></div>
+            </div>
+
+            <div class="card card-pad info-card">
+                <div class="card-title">⏱ Thời Gian Làm Bài</div>
+                <div style="height:8px"></div>
+                <div class="info-row"><span class="info-key">Bắt đầu</span><span class="info-val">12/06/2026 –
+                        09:15:02</span></div>
+                <div class="info-row"><span class="info-key">Nộp bài</span><span class="info-val">12/06/2026 –
+                        09:57:38</span></div>
+                <div class="info-row"><span class="info-key">Thời gian làm</span><span class="info-val">42 phút 36
+                        giây</span></div>
+                <div class="info-row"><span class="info-key">Thời gian dư</span><span class="info-val">2 phút 24
+                        giây</span></div>
+                <div class="info-row"><span class="info-key">Cách nộp</span><span class="info-val"><span
+                            class="badge b-blue" style="font-size:11px;">Tự nộp</span></span></div>
+                <div class="info-row"><span class="info-key">Trạng thái</span><span class="info-val"><span
+                            class="badge b-yellow" id="statusBadge">⏳ Chờ duyệt</span></span></div>
+            </div>
+        </div>
+
+        <!-- ── STAT STRIP ── -->
+        <div class="stat-strip" style="margin-bottom:22px;">
+            <div class="card stat-mini">
+                <div class="num green" id="statCorrect">13</div>
+                <div class="lbl">Câu đúng</div>
+            </div>
+            <div class="card stat-mini">
+                <div class="num red" id="statWrong">2</div>
+                <div class="lbl">Câu sai</div>
+            </div>
+            <div class="card stat-mini">
+                <div class="num" style="color:#94a3b8;" id="statSkip">0</div>
+                <div class="lbl">Bỏ qua</div>
+            </div>
+            <div class="card stat-mini">
+                <div class="num blue" id="statScore">87</div>
+                <div class="lbl">Điểm số</div>
+            </div>
+            <div class="card stat-mini">
+                <div class="num purple">#2</div>
+                <div class="lbl">Xếp hạng phòng</div>
+            </div>
+        </div>
+
+        <!-- ── TABS ── -->
+        <div class="tab-bar">
+            <button class="tab active" onclick="switchTab('questions', this)">📋 Chi Tiết Câu Hỏi (15)</button>
+            <button class="tab" onclick="switchTab('breakdown', this)">📊 Phân Tích Điểm</button>
+            <button class="tab" onclick="switchTab('history', this)">🕐 Lịch Sử Duyệt</button>
+            <button class="tab" onclick="switchTab('compare', this)">👥 So Sánh Nhóm</button>
+        </div>
+
+        <!-- ════ TAB: CHI TIẾT CÂU HỎI ════ -->
+        <div class="tab-page active" id="tab-questions">
+
+            <!-- Filter + score edit hint -->
+            <div
+                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn btn-ghost btn-sm" onclick="filterQ('all')" id="qf-all"
+                        style="background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;">Tất Cả (15)</button>
+                    <button class="btn btn-ghost btn-sm" onclick="filterQ('correct')" id="qf-correct">✅ Đúng
+                        (13)</button>
+                    <button class="btn btn-ghost btn-sm" onclick="filterQ('wrong')" id="qf-wrong">❌ Sai (2)</button>
+                    <button class="btn btn-ghost btn-sm" onclick="filterQ('skip')" id="qf-skip">⭕ Bỏ qua (0)</button>
+                </div>
+                <div style="font-size:12px;color:rgba(13,31,60,0.5);">💡 Bạn có thể chỉnh sửa đánh giá từng câu nếu cần
+                </div>
+            </div>
+
+            <div class="q-review-list" id="qReviewList">
+
+                <!-- Q1 – ĐÚNG -->
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 1</div>
+                        <div class="qr-topic">An toàn lao động · ⚡ Trung bình</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Theo quy định, khoảng cách an toàn tối thiểu khi làm việc gần đường dây
+                            điện cao thế 110kV là bao nhiêu mét?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">1,0 mét</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">2,0 mét</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">4,0 mét — <em>Đáp án đúng &amp; người thi đã chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">6,0 mét</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row">
+                            <span class="qr-score-label">Điểm câu này:</span>
+                            <input class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns">
+                                <button class="qr-btn-correct" onclick="setScore(this, 1)">✓ Đúng</button>
+                                <button class="qr-btn-wrong" onclick="setScore(this, 0)">✕ Sai</button>
+                            </div>
+                            <span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q2 – ĐÚNG -->
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 2</div>
+                        <div class="qr-topic">PCCC · 🟢 Dễ</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Khi phát hiện đám cháy nhỏ tại nơi làm việc, hành động đầu tiên cần
+                            thực hiện là gì?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Chạy ra ngoài ngay</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">Hô to báo động và sử dụng bình cứu hỏa — <em>Đáp án đúng &amp; người
+                                        thi đã chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Gọi điện cho gia đình</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Chờ người khác xử lý</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row">
+                            <span class="qr-score-label">Điểm câu này:</span>
+                            <input class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns">
+                                <button class="qr-btn-correct" onclick="setScore(this, 1)">✓ Đúng</button>
+                                <button class="qr-btn-wrong" onclick="setScore(this, 0)">✕ Sai</button>
+                            </div>
+                            <span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q3 – SAI -->
+                <div class="q-review-card q-wrong" data-status="wrong">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 3</div>
+                        <div class="qr-topic">ISO 9001 · 🔴 Khó</div>
+                        <div class="qr-result"><span class="badge b-red">❌ Sai</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Theo ISO 9001:2015, "Đánh giá nội bộ" phải được thực hiện theo kế hoạch
+                            với tần suất tối thiểu là bao nhiêu lần mỗi năm?</div>
+                        <div class="qr-options">
+                            <div class="qr-option opt-chosen-wrong">
+                                <div class="opt-lbl"
+                                    style="border-color:#dc2626;color:#dc2626;background:rgba(220,38,38,.07);">A</div>
+                                <div style="flex:1;color:#991b1b;">1 lần — <em>Người thi đã chọn (Sai)</em></div>
+                                <div class="opt-icon">❌</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">2 lần</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Tùy theo kế hoạch đã định — <em>Đáp án đúng</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Không bắt buộc</div>
+                            </div>
+                        </div>
+                        <div class="qr-explain">
+                            <strong>💡 Giải thích:</strong> ISO 9001:2015 yêu cầu đánh giá nội bộ <strong>theo kế hoạch
+                                đã hoạch định</strong>, không quy định cố định số lần, nhưng phải đủ để đánh giá toàn bộ
+                            hệ thống trong chu kỳ.
+                        </div>
+                        <div class="qr-score-row">
+                            <span class="qr-score-label">Điểm câu này:</span>
+                            <input class="qr-score-input" type="number" value="0" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns">
+                                <button class="qr-btn-correct" onclick="setScore(this, 1)">✓ Đúng</button>
+                                <button class="qr-btn-wrong" onclick="setScore(this, 0)">✕ Sai</button>
+                            </div>
+                            <span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q4–Q14: Đúng hết (render nhanh 11 câu) -->
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 4</div>
+                        <div class="qr-topic">An toàn lao động · 🔴 Khó</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Thiết bị bảo hộ cá nhân (PPE) – mũ bảo hộ công nghiệp thông thường có
+                            hạn sử dụng tối đa từ ngày sản xuất là bao lâu?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">1 năm</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">3 năm — <em>Đáp án đúng &amp; người thi chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">5 năm</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Không có hạn</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 5</div>
+                        <div class="qr-topic">PCCC · ⚡ Trung bình</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Bình cứu hỏa bột khô loại BC phù hợp để dập tắt đám cháy nào?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Đám cháy gỗ, giấy (loại A)</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">Đám cháy xăng dầu và thiết bị điện — <em>Đáp án đúng &amp; người thi
+                                        chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Đám cháy kim loại kiềm</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Tất cả các loại</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 6</div>
+                        <div class="qr-topic">An toàn lao động · 🟢 Dễ</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Khi bị tai nạn lao động gây chảy máu vết thương nhỏ, bước sơ cứu đầu
+                            tiên là gì?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Dùng miệng hút vết thương</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">Rửa vết thương bằng nước sạch và băng lại — <em>Đáp án đúng &amp;
+                                        người thi chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Tiêm kháng sinh ngay</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Không cần xử lý</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q7 – SAI -->
+                <div class="q-review-card q-wrong" data-status="wrong">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 7</div>
+                        <div class="qr-topic">ISO 9001 · 🔴 Khó</div>
+                        <div class="qr-result"><span class="badge b-red">❌ Sai</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Theo ISO 9001:2015, điều nào sau đây KHÔNG phải là yêu cầu bắt buộc đối
+                            với "Thông tin dạng văn bản"?</div>
+                        <div class="qr-options">
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Phải có ngày tháng ban hành — <em>Đáp án đúng</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option opt-chosen-wrong">
+                                <div class="opt-lbl"
+                                    style="border-color:#dc2626;color:#dc2626;background:rgba(220,38,38,.07);">B</div>
+                                <div style="flex:1;color:#991b1b;">Phải được nhận dạng và mô tả — <em>Người thi đã chọn
+                                        (Sai)</em></div>
+                                <div class="opt-icon">❌</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Phải ở định dạng và phương tiện thích hợp</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Phải được xem xét và chấp thuận</div>
+                            </div>
+                        </div>
+                        <div class="qr-explain"><strong>💡 Giải thích:</strong> ISO 9001:2015 <strong>không yêu cầu bắt
+                                buộc</strong> phải có ngày tháng ban hành trên tài liệu (điều khoản 7.5). Các yếu tố A,
+                            B, C trong đáp án đều là yêu cầu thực sự.</div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="0" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q8–Q15: Đúng hết -->
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 8</div>
+                        <div class="qr-topic">An toàn điện · ⚡ Trung bình</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Ai được phép thực hiện công việc sửa chữa thiết bị điện đang có điện
+                            trong nhà xưởng?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Bất kỳ nhân viên có kinh nghiệm</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">Chỉ người có chứng chỉ an toàn điện phù hợp — <em>Đáp án đúng &amp;
+                                        người thi chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Trưởng phòng kỹ thuật</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Nhân viên bảo trì bất kỳ</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 9</div>
+                        <div class="qr-topic">PCCC · 🟢 Dễ</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Cửa thoát hiểm trong nhà xưởng phải đảm bảo yêu cầu gì?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Có thể khóa để đảm bảo an ninh</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">Luôn thông thoáng, không bị chặn và mở ra phía ngoài — <em>Đáp án
+                                        đúng &amp; người thi chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Chỉ cần mở được từ bên trong</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Có thể dùng làm cửa kho</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 10</div>
+                        <div class="qr-topic">An toàn lao động · ⚡ Trung bình</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Mức ồn tối đa cho phép tiếp xúc trong 8 giờ làm việc theo QCVN
+                            24:2016/BYT là bao nhiêu dB(A)?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">75 dB(A)</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">85 dB(A) — <em>Đáp án đúng &amp; người thi chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">95 dB(A)</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">100 dB(A)</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 11</div>
+                        <div class="qr-topic">ISO 9001 · ⚡ Trung bình</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Trong vòng PDCA áp dụng trong ISO 9001, giai đoạn "Check" bao gồm hoạt
+                            động nào?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Lập kế hoạch cải tiến</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">Triển khai thực hiện quy trình</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Theo dõi, đo lường và phân tích kết quả — <em>Đáp án đúng &amp;
+                                        người thi chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Thực hiện hành động khắc phục</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 12</div>
+                        <div class="qr-topic">An toàn điện · 🔴 Khó</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Sau khi cắt cầu dao chính, bước tiếp theo bắt buộc theo nguyên tắc LOTO
+                            là gì?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Bắt đầu sửa chữa ngay</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">Khóa cầu dao và treo biển cảnh báo (LOTO) — <em>Đáp án đúng &amp;
+                                        người thi chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Thông báo bằng miệng</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Kiểm tra bằng tay</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 13</div>
+                        <div class="qr-topic">PCCC · ⚡ Trung bình</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Bình cứu hỏa cần được kiểm tra áp suất và bảo dưỡng định kỳ theo quy
+                            định là bao lâu một lần?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">3 tháng / lần</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">6 tháng / lần</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">1 năm / lần — <em>Đáp án đúng &amp; người thi chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">2 năm / lần</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 14</div>
+                        <div class="qr-topic">An toàn lao động · 🟢 Dễ</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Khi làm việc trên cao từ 2 mét trở lên, thiết bị bảo hộ bắt buộc phải
+                            sử dụng là gì?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Mũ bảo hộ</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">Dây an toàn toàn thân — <em>Đáp án đúng &amp; người thi chọn</em>
+                                </div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Giày bảo hộ</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Kính bảo hộ</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-review-card q-correct" data-status="correct">
+                    <div class="qr-header">
+                        <div class="qr-num">Câu 15</div>
+                        <div class="qr-topic">ISO 9001 · ⚡ Trung bình</div>
+                        <div class="qr-result"><span class="badge b-green">✅ Đúng</span></div>
+                    </div>
+                    <div class="qr-body">
+                        <div class="qr-question">Quy trình xử lý "Sự không phù hợp" theo ISO 9001:2015 đúng thứ tự là
+                            gì?</div>
+                        <div class="qr-options">
+                            <div class="qr-option">
+                                <div class="opt-lbl">A</div>
+                                <div style="flex:1">Ghi lại → Phân tích → Khắc phục</div>
+                            </div>
+                            <div class="qr-option opt-correct">
+                                <div class="opt-lbl">B</div>
+                                <div style="flex:1">Khắc phục ngay → Phân tích nguyên nhân → Hành động phòng ngừa —
+                                    <em>Đáp án đúng &amp; người thi chọn</em></div>
+                                <div class="opt-icon">✅</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">C</div>
+                                <div style="flex:1">Báo cáo lãnh đạo → Đóng hồ sơ → Khắc phục</div>
+                            </div>
+                            <div class="qr-option">
+                                <div class="opt-lbl">D</div>
+                                <div style="flex:1">Bỏ qua nếu không ảnh hưởng khách hàng</div>
+                            </div>
+                        </div>
+                        <div class="qr-score-row"><span class="qr-score-label">Điểm câu này:</span><input
+                                class="qr-score-input" type="number" value="1" min="0" max="1"
+                                oninput="markOverride(this)">
+                            <div class="qr-override-btns"><button class="qr-btn-correct" onclick="setScore(this,1)">✓
+                                    Đúng</button><button class="qr-btn-wrong" onclick="setScore(this,0)">✕ Sai</button>
+                            </div><span class="qr-override-note">⚠ Đã chỉnh sửa</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /q-review-list -->
+
+            <!-- Ghi chú tổng -->
+            <div class="note-box" style="margin-top:20px;">
+                <div class="note-label">📝 Ghi Chú Của Quản Lý</div>
+                <textarea class="note-textarea"
+                    placeholder="Nhập nhận xét, ghi chú về bài thi này (sẽ được lưu vào hồ sơ người thi)..."></textarea>
+            </div>
+
+            <!-- Action row -->
+            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap;">
+                <button class="btn btn-ghost" onclick="recalcScore()">🔄 Tính Lại Điểm</button>
+                <button class="btn btn-warning" onclick="openOverride()">✏ Chỉnh Sửa Điểm Tổng</button>
+                <button class="btn btn-danger" onclick="openReject()">✕ Từ Chối</button>
+                <button class="btn btn-success" onclick="openApprove()">✓ Duyệt &amp; Xác Nhận Điểm</button>
+            </div>
+        </div>
+
+        <!-- ════ TAB: PHÂN TÍCH ĐIỂM ════ -->
+        <div class="tab-page" id="tab-breakdown">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
+
+                <div class="card card-pad">
+                    <div class="card-title">📊 Kết Quả Theo Chủ Đề</div>
+                    <div class="card-sub">Tỉ lệ trả lời đúng theo từng quy trình</div>
+                    <div style="display:flex;flex-direction:column;gap:14px;">
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                                <span style="font-weight:500;color:#0d1f3c;">An toàn lao động</span>
+                                <span style="font-weight:600;color:#059669;">5/5 câu</span>
+                            </div>
+                            <div class="prog-wrap">
+                                <div class="prog-track">
+                                    <div class="prog-fill pf-green" style="width:100%"></div>
+                                </div><span class="prog-pct" style="color:#059669;">100%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                                <span style="font-weight:500;color:#0d1f3c;">PCCC</span>
+                                <span style="font-weight:600;color:#059669;">4/4 câu</span>
+                            </div>
+                            <div class="prog-wrap">
+                                <div class="prog-track">
+                                    <div class="prog-fill pf-green" style="width:100%"></div>
+                                </div><span class="prog-pct" style="color:#059669;">100%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                                <span style="font-weight:500;color:#0d1f3c;">An toàn điện</span>
+                                <span style="font-weight:600;color:#059669;">3/3 câu</span>
+                            </div>
+                            <div class="prog-wrap">
+                                <div class="prog-track">
+                                    <div class="prog-fill pf-green" style="width:100%"></div>
+                                </div><span class="prog-pct" style="color:#059669;">100%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                                <span style="font-weight:500;color:#0d1f3c;">ISO 9001</span>
+                                <span style="font-weight:600;color:#dc2626;">1/3 câu</span>
+                            </div>
+                            <div class="prog-wrap">
+                                <div class="prog-track">
+                                    <div class="prog-fill pf-red" style="width:33%"></div>
+                                </div><span class="prog-pct" style="color:#dc2626;">33%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-pad">
+                    <div class="card-title">📈 Theo Độ Khó</div>
+                    <div class="card-sub">Phân tích kết quả theo mức độ câu hỏi</div>
+                    <div style="display:flex;flex-direction:column;gap:14px;">
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                                <span style="display:flex;align-items:center;gap:6px;font-weight:500;color:#0d1f3c;">🟢
+                                    Dễ</span>
+                                <span style="font-weight:600;color:#059669;">4/4 câu</span>
+                            </div>
+                            <div class="prog-wrap">
+                                <div class="prog-track">
+                                    <div class="prog-fill pf-green" style="width:100%"></div>
+                                </div><span class="prog-pct" style="color:#059669;">100%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                                <span style="display:flex;align-items:center;gap:6px;font-weight:500;color:#0d1f3c;">⚡
+                                    Trung bình</span>
+                                <span style="font-weight:600;color:#059669;">6/6 câu</span>
+                            </div>
+                            <div class="prog-wrap">
+                                <div class="prog-track">
+                                    <div class="prog-fill pf-green" style="width:100%"></div>
+                                </div><span class="prog-pct" style="color:#059669;">100%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                                <span style="display:flex;align-items:center;gap:6px;font-weight:500;color:#0d1f3c;">🔴
+                                    Khó</span>
+                                <span style="font-weight:600;color:#dc2626;">3/5 câu</span>
+                            </div>
+                            <div class="prog-wrap">
+                                <div class="prog-track">
+                                    <div class="prog-fill pf-red" style="width:60%"></div>
+                                </div><span class="prog-pct" style="color:#dc2626;">60%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(59,130,246,0.08);font-size:12.5px;color:rgba(13,31,60,.6);line-height:1.6;">
+                        💬 Người thi nắm vững kiến thức An toàn lao động và PCCC. Cần ôn luyện thêm về <strong
+                            style="color:#0d1f3c;">ISO 9001</strong> đặc biệt phần văn bản và đánh giá nội bộ.
+                    </div>
+                </div>
+            </div>
+
+            <!-- So sánh với trung bình phòng -->
+            <div class="card card-pad">
+                <div class="card-title">📊 So Sánh Với Trung Bình Phòng Kỹ Thuật</div>
+                <div class="card-sub">Bài kiểm tra An Toàn Lao Động – Bắt Buộc (45 người)</div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                        <thead>
+                            <tr style="background:#eaf3ff;">
+                                <th
+                                    style="padding:11px 14px;text-align:left;color:#2563eb;font-size:11px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid rgba(59,130,246,0.14);">
+                                    Chỉ Số</th>
+                                <th
+                                    style="padding:11px 14px;text-align:center;color:#2563eb;font-size:11px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid rgba(59,130,246,0.14);">
+                                    Lê Văn C</th>
+                                <th
+                                    style="padding:11px 14px;text-align:center;color:#2563eb;font-size:11px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid rgba(59,130,246,0.14);">
+                                    TB Phòng</th>
+                                <th
+                                    style="padding:11px 14px;text-align:center;color:#2563eb;font-size:11px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid rgba(59,130,246,0.14);">
+                                    Cao Nhất</th>
+                                <th
+                                    style="padding:11px 14px;text-align:center;color:#2563eb;font-size:11px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid rgba(59,130,246,0.14);">
+                                    So Sánh</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid rgba(59,130,246,0.07);">
+                                <td style="padding:12px 14px;color:#0d1f3c;font-weight:500;">Điểm số</td>
+                                <td style="padding:12px 14px;text-align:center;font-weight:700;color:#059669;">87</td>
+                                <td style="padding:12px 14px;text-align:center;">79.4</td>
+                                <td style="padding:12px 14px;text-align:center;font-weight:600;">98</td>
+                                <td style="padding:12px 14px;text-align:center;"><span class="badge b-green">↑
+                                        +7.6</span></td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(59,130,246,0.07);">
+                                <td style="padding:12px 14px;color:#0d1f3c;font-weight:500;">Thời gian làm</td>
+                                <td style="padding:12px 14px;text-align:center;font-weight:700;color:#2563eb;">42'</td>
+                                <td style="padding:12px 14px;text-align:center;">38'</td>
+                                <td style="padding:12px 14px;text-align:center;font-weight:600;">22'</td>
+                                <td style="padding:12px 14px;text-align:center;"><span class="badge b-yellow">+4
+                                        phút</span></td>
+                            </tr>
+                            <tr style="border-bottom:1px solid rgba(59,130,246,0.07);">
+                                <td style="padding:12px 14px;color:#0d1f3c;font-weight:500;">Số câu đúng</td>
+                                <td style="padding:12px 14px;text-align:center;font-weight:700;color:#059669;">13/15
+                                </td>
+                                <td style="padding:12px 14px;text-align:center;">11.9/15</td>
+                                <td style="padding:12px 14px;text-align:center;font-weight:600;">15/15</td>
+                                <td style="padding:12px 14px;text-align:center;"><span class="badge b-green">↑ Trên
+                                        TB</span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:12px 14px;color:#0d1f3c;font-weight:500;">Xếp hạng phòng</td>
+                                <td style="padding:12px 14px;text-align:center;font-weight:700;color:#2563eb;">#2 / 28
+                                </td>
+                                <td style="padding:12px 14px;text-align:center;">–</td>
+                                <td style="padding:12px 14px;text-align:center;font-weight:600;">#1</td>
+                                <td style="padding:12px 14px;text-align:center;"><span class="badge b-green">Top
+                                        10%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ TAB: LỊCH SỬ DUYỆT ════ -->
+        <div class="tab-page" id="tab-history">
+            <div class="card card-pad">
+                <div class="card-title">🕐 Nhật Ký Duyệt Điểm</div>
+                <div class="card-sub">Toàn bộ thao tác liên quan đến bài thi này</div>
+                <div class="activity-list">
+                    <div class="act-item">
+                        <div class="act-dot-col">
+                            <div class="act-dot" style="background:#2563eb;box-shadow:0 0 6px rgba(37,99,235,.5);">
+                            </div>
+                            <div class="act-line"></div>
+                        </div>
+                        <div class="act-body">
+                            <div class="act-title">Hệ thống <span>tự động chấm điểm</span> và tạo bản ghi kết quả</div>
+                            <div class="act-by">Hệ thống tự động · Điểm tính toán: 87/100</div>
+                            <div class="act-time">12/06/2026 lúc 09:57:42</div>
+                        </div>
+                    </div>
+                    <div class="act-item">
+                        <div class="act-dot-col">
+                            <div class="act-dot" style="background:#d97706;box-shadow:0 0 6px rgba(217,119,6,.5);">
+                            </div>
+                            <div class="act-line"></div>
+                        </div>
+                        <div class="act-body">
+                            <div class="act-title">Kết quả <span>chuyển sang trạng thái "Chờ duyệt"</span></div>
+                            <div class="act-by">Hệ thống tự động</div>
+                            <div class="act-time">12/06/2026 lúc 09:57:42</div>
+                        </div>
+                    </div>
+                    <div class="act-item">
+                        <div class="act-dot-col">
+                            <div class="act-dot" style="background:#6366f1;box-shadow:0 0 6px rgba(99,102,241,.5);">
+                            </div>
+                            <div class="act-line"></div>
+                        </div>
+                        <div class="act-body">
+                            <div class="act-title"><span>Nguyễn Văn A</span> (Trưởng phòng KT) đã xem kết quả</div>
+                            <div class="act-by">IP: 192.168.1.42 · Trình duyệt: Chrome 124</div>
+                            <div class="act-time">12/06/2026 lúc 10:15:08</div>
+                        </div>
+                    </div>
+                    <div class="act-item">
+                        <div class="act-dot-col">
+                            <div class="act-dot" style="background:#94a3b8;"></div>
+                        </div>
+                        <div class="act-body">
+                            <div class="act-title" style="color:rgba(13,31,60,.45);">Chưa có thao tác duyệt</div>
+                            <div class="act-time" style="color:rgba(13,31,60,.35);">Đang chờ xác nhận từ quản lý</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ TAB: SO SÁNH NHÓM ════ -->
+        <div class="tab-page" id="tab-compare">
+            <div class="card">
+                <div class="table-card">
+                    <table id="tbl-compare" class="display stripe" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Xếp Hạng</th>
+                                <th>Người Thi</th>
+                                <th>Điểm Số</th>
+                                <th>Câu Đúng</th>
+                                <th>Thời Gian</th>
+                                <th>Trạng Thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background:rgba(37,99,235,0.05)!important;font-weight:500;">
+                                <td><span class="badge b-blue">#2</span></td>
+                                <td class="col-name">Lê Văn C ← Bạn đang xem<small>Phòng Kỹ Thuật</small></td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:9px;">
+                                        <div class="score-ring sr-pass">87</div>
+                                    </div>
+                                </td>
+                                <td>13 / 15</td>
+                                <td>42 phút</td>
+                                <td><span class="badge b-yellow">⏳ Chờ duyệt</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge"
+                                        style="background:rgba(245,158,11,0.15);color:#d97706;border:1px solid rgba(245,158,11,0.3);">#1</span>
+                                </td>
+                                <td class="col-name">Nguyễn Văn A<small>Phòng Kỹ Thuật</small></td>
+                                <td>
+                                    <div class="score-ring sr-pass">98</div>
+                                </td>
+                                <td>15 / 15</td>
+                                <td>28 phút</td>
+                                <td><span class="badge b-green">✅ Đã duyệt</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge b-grey">#3</span></td>
+                                <td class="col-name">Trần Thị B<small>Phòng Kỹ Thuật</small></td>
+                                <td>
+                                    <div class="score-ring sr-pass">82</div>
+                                </td>
+                                <td>12 / 15</td>
+                                <td>38 phút</td>
+                                <td><span class="badge b-green">✅ Đã duyệt</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge b-grey">#4</span></td>
+                                <td class="col-name">Phạm Văn D<small>Phòng Kỹ Thuật</small></td>
+                                <td>
+                                    <div class="score-ring sr-pass">80</div>
+                                </td>
+                                <td>12 / 15</td>
+                                <td>44 phút</td>
+                                <td><span class="badge b-green">✅ Đã duyệt</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge b-grey">#5</span></td>
+                                <td class="col-name">Hoàng Thị E<small>Phòng Kỹ Thuật</small></td>
+                                <td>
+                                    <div class="score-ring sr-fail">65</div>
+                                </td>
+                                <td>9 / 15</td>
+                                <td>40 phút</td>
+                                <td><span class="badge b-red">❌ Không đạt</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /page -->
+
+    <!-- ══════════ MODAL: APPROVE ══════════ -->
+    <div class="overlay" id="approveOverlay">
+        <div class="modal modal-sm">
+            <div class="modal-head">
+                <div class="modal-title">✓ Xác Nhận Duyệt Điểm</div>
+                <div class="modal-close" onclick="closeModal('approveOverlay')">×</div>
+            </div>
+            <p style="font-size:13.5px;color:rgba(13,31,60,.7);line-height:1.65;margin-bottom:16px;">
+                Bạn đang xác nhận kết quả bài thi của <strong>Lê Văn C</strong> với điểm số <strong id="approveScore"
+                    style="color:#059669;">87/100</strong>.
+                Sau khi duyệt, điểm số sẽ được ghi nhận chính thức vào hồ sơ và không thể thay đổi.
+            </p>
+            <div
+                style="background:rgba(5,150,105,.07);border:1px solid rgba(5,150,105,.22);border-radius:10px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:#065f46;">
+                ✅ Kết quả: <strong>ĐẠT</strong> (87% ≥ 80% ngưỡng yêu cầu)
+            </div>
+            <div class="note-box">
+                <div class="note-label">Ghi Chú Duyệt (tuỳ chọn)</div>
+                <textarea class="note-textarea" style="min-height:70px;"
+                    placeholder="Nhận xét của quản lý (sẽ hiển thị trong phiếu kết quả)..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('approveOverlay')">Hủy</button>
+                <button class="btn btn-success" onclick="doApprove()">✓ Xác Nhận Duyệt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════ MODAL: OVERRIDE SCORE ══════════ -->
+    <div class="overlay" id="overrideOverlay">
+        <div class="modal modal-sm">
+            <div class="modal-head">
+                <div class="modal-title">✏ Chỉnh Sửa Điểm Tổng</div>
+                <div class="modal-close" onclick="closeModal('overrideOverlay')">×</div>
+            </div>
+            <div style="background:#f5f9ff;border-radius:10px;padding:14px 16px;margin-bottom:18px;">
+                <div style="font-size:12px;color:#2563eb;margin-bottom:8px;font-weight:600;">ĐIỂM HIỆN TẠI</div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="font-family:var(--fh);font-size:36px;font-weight:700;color:#059669;">87</div>
+                    <div style="font-size:13px;color:rgba(13,31,60,.6);">/ 100 điểm<br>(13/15 câu đúng)</div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <div
+                    style="font-size:12px;font-weight:600;color:#2563eb;margin-bottom:7px;letter-spacing:.5px;text-transform:uppercase;">
+                    Điểm Mới</div>
+                <input type="number" min="0" max="100" value="87"
+                    style="width:100%;padding:12px 16px;border-radius:9px;border:1.5px solid rgba(59,130,246,0.22);background:#f5f9ff;color:#0d1f3c;font-size:22px;font-weight:700;font-family:var(--fh);outline:none;text-align:center;"
+                    id="overrideInput">
+            </div>
+            <div class="note-box" style="margin-bottom:0;">
+                <div class="note-label">Lý Do Chỉnh Sửa *</div>
+                <textarea class="note-textarea" style="min-height:80px;"
+                    placeholder="Bắt buộc nhập lý do khi chỉnh sửa điểm..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('overrideOverlay')">Hủy</button>
+                <button class="btn btn-warning" onclick="doOverride()">✏ Lưu Điểm Mới</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════ MODAL: REJECT ══════════ -->
+    <div class="overlay" id="rejectOverlay">
+        <div class="modal modal-sm">
+            <div class="modal-head">
+                <div class="modal-title">✕ Từ Chối Kết Quả</div>
+                <div class="modal-close" onclick="closeModal('rejectOverlay')">×</div>
+            </div>
+            <div
+                style="background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:10px;padding:13px 15px;margin-bottom:16px;font-size:13px;color:#991b1b;line-height:1.55;">
+                ⚠ Từ chối sẽ đánh dấu bài thi này là <strong>không hợp lệ</strong>. Người thi có thể sẽ phải thi lại.
+            </div>
+            <div class="note-box">
+                <div class="note-label">Lý Do Từ Chối *</div>
+                <textarea class="note-textarea" style="min-height:90px;"
+                    placeholder="Nhập lý do từ chối (bắt buộc)..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('rejectOverlay')">Hủy</button>
+                <button class="btn btn-danger" onclick="doReject()">✕ Xác Nhận Từ Chối</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <span id="toastIcon">✅</span>
+        <span id="toastMsg">Thao tác thành công</span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script>
+        /* ── DATATABLES ── */
+        $('#tbl-compare').DataTable({
+            language: { search: '', searchPlaceholder: '🔍 Tìm kiếm...', lengthMenu: 'Hiển thị _MENU_ dòng', info: '_START_–_END_ / _TOTAL_', infoEmpty: 'Không có dữ liệu', zeroRecords: 'Không tìm thấy', paginate: { first: '«', previous: '‹', next: '›', last: '»' } },
+            dom: '<"dataTables_top-bar"lf>rt<"dataTables_bottom-bar"ip>',
+            pageLength: 10, order: [[2, 'desc']], columnDefs: [{ orderable: false, targets: [5] }]
+        });
+
+        /* ── TABS ── */
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
+            el.classList.add('active');
+            if (id === 'compare') $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+        }
+
+        /* ── QUESTION FILTER ── */
+        function filterQ(type) {
+            const btns = ['all', 'correct', 'wrong', 'skip'];
+            btns.forEach(b => {
+                const btn = document.getElementById('qf-' + b);
+                if (b === type) { btn.style.background = 'linear-gradient(135deg,#2563eb,#3b82f6)'; btn.style.color = '#fff'; }
+                else { btn.style.background = ''; btn.style.color = ''; }
+            });
+            document.querySelectorAll('.q-review-card').forEach(card => {
+                card.style.display = (type === 'all' || card.dataset.status === type) ? '' : 'none';
+            });
+        }
+
+        /* ── SCORE OVERRIDE PER QUESTION ── */
+        function markOverride(input) {
+            const note = input.closest('.qr-score-row').querySelector('.qr-override-note');
+            note.classList.add('show');
+        }
+        function setScore(btn, val) {
+            const row = btn.closest('.qr-score-row');
+            row.querySelector('.qr-score-input').value = val;
+            row.querySelector('.qr-override-note').classList.add('show');
+            recalcScore();
+        }
+
+        /* ── RECALC TOTAL SCORE ── */
+        function recalcScore() {
+            let total = 0;
+            document.querySelectorAll('.qr-score-input').forEach(inp => {
+                total += Math.max(0, Math.min(1, Number(inp.value) || 0));
+            });
+            const score = Math.round((total / 15) * 100);
+            document.getElementById('heroScore').textContent = score;
+            document.getElementById('statScore').textContent = score;
+            document.getElementById('statCorrect').textContent = total;
+            document.getElementById('statWrong').textContent = 15 - total;
+            document.getElementById('approveScore').textContent = score + '/100';
+            showToast('🔄 Đã tính lại: ' + score + ' điểm (' + total + '/15 câu đúng)', 'blue');
+        }
+
+        /* ── MODALS ── */
+        function openApprove() { closeAllModals(); document.getElementById('approveOverlay').classList.add('open'); }
+        function openOverride() { closeAllModals(); document.getElementById('overrideOverlay').classList.add('open'); }
+        function openReject() { closeAllModals(); document.getElementById('rejectOverlay').classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        function closeAllModals() { document.querySelectorAll('.overlay').forEach(o => o.classList.remove('open')); }
+        document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+
+        /* ── ACTIONS ── */
+        function doApprove() {
+            closeAllModals();
+            setStatus('approved');
+            showToast('✅ Đã duyệt điểm thành công!', 'success');
+        }
+        function doOverride() {
+            const val = parseInt(document.getElementById('overrideInput').value) || 0;
+            document.getElementById('heroScore').textContent = val;
+            document.getElementById('statScore').textContent = val;
+            document.getElementById('approveScore').textContent = val + '/100';
+            closeAllModals();
+            showToast('✏ Đã cập nhật điểm: ' + val + '/100', 'blue');
+        }
+        function doReject() {
+            closeAllModals();
+            setStatus('rejected');
+            showToast('✕ Đã từ chối kết quả thi', 'error');
+        }
+
+        function setStatus(status) {
+            const banner = document.getElementById('statusBanner');
+            const heroTag = document.getElementById('heroTag');
+            const badge = document.getElementById('statusBadge');
+            const sbTitle = document.getElementById('sbTitle');
+            const sbDesc = document.getElementById('sbDesc');
+            const sbActions = document.getElementById('sbActions');
+
+            if (status === 'approved') {
+                banner.className = 'status-banner sb-approved';
+                heroTag.className = 'hero-tag ht-pass'; heroTag.textContent = '✅ Đã Duyệt';
+                badge.className = 'badge b-green'; badge.textContent = '✅ Đã duyệt';
+                sbTitle.textContent = 'Kết quả đã được duyệt và xác nhận';
+                sbDesc.textContent = 'Điểm số đã ghi nhận chính thức. Người thi có thể xem kết quả.';
+                sbActions.innerHTML = '<button class="btn btn-ghost btn-sm" onclick="openOverride()">✏ Chỉnh Sửa Lại</button>';
+                document.getElementById('statusBanner').querySelector('.sb-icon').textContent = '✅';
+            } else if (status === 'rejected') {
+                banner.className = 'status-banner sb-rejected';
+                heroTag.className = 'hero-tag ht-fail'; heroTag.textContent = '✕ Đã Từ Chối';
+                badge.className = 'badge b-red'; badge.textContent = '✕ Đã từ chối';
+                sbTitle.textContent = 'Kết quả đã bị từ chối';
+                sbDesc.textContent = 'Bài thi được đánh dấu không hợp lệ. Quản lý có thể mở lại để xem xét.';
+                sbActions.innerHTML = '<button class="btn btn-warning btn-sm" onclick="setStatus(\'pending\')">↩ Mở Lại Xem Xét</button>';
+                document.getElementById('statusBanner').querySelector('.sb-icon').textContent = '✕';
+            }
+
+            // Add to activity log
+            const log = document.querySelector('.activity-list');
+            const now = new Date().toLocaleString('vi-VN');
+            const newItem = document.createElement('div');
+            newItem.className = 'act-item';
+            newItem.innerHTML = `<div class="act-dot-col"><div class="act-dot" style="background:${status === 'approved' ? '#059669' : '#dc2626'};box-shadow:0 0 6px ${status === 'approved' ? 'rgba(5,150,105,.5)' : 'rgba(220,38,38,.5)'};"></div></div><div class="act-body"><div class="act-title"><span>Admin Tuấn</span> đã ${status === 'approved' ? '<strong>duyệt điểm</strong>' : '<strong>từ chối</strong>'} kết quả bài thi này</div><div class="act-by">Quản trị viên hệ thống</div><div class="act-time">${now}</div></div>`;
+            log.appendChild(newItem);
+        }
+
+        /* ── TOAST ── */
+        let toastTimer;
+        function showToast(msg, type = 'blue') {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            t.className = 'toast ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '');
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+        }
+    </script>
+</body>
+
+</html>

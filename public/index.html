@@ -40,7 +40,7 @@
         <nav class="sidebar-nav">
             <div class="nav-section-label">Tổng Quan</div>
             <div class="nav-item active" onclick="navigate('dashboard', this)">
-                <span class="nav-icon">🏠</span> Bảng Điều Khiển
+                <span class="nav-icon">🏠</span> Trang Chủ
             </div>
 
             <div class="nav-item" id="searchNav" onclick="navigate('tracuu', this)">
@@ -61,7 +61,7 @@
                     <span class="nav-icon">📝</span> Bài Kiểm Tra
                     <span class="nav-badge" id="sidebar-baikiemtra"></span>
                 </div>
-                <div class="nav-item" onclick="navigate('qlkqthi', this)">
+                <div class="nav-item" id="qlkqthiNav" onclick="navigate('qlkqthi', this)">
                     <span class="nav-icon">🎯</span> Kết Quả
                 </div>
 
@@ -89,7 +89,7 @@
                 </div>
                 <div class="user-info">
                     <div id="user-name2" class="user-name">Name</div>
-                    <div class="user-role">Quản trị viên</div>
+                    <div class="user-role" id="user-role">Quản trị viên</div>
                 </div>
                 <span style="font-size:14px; opacity:.5;">⋯</span>
             </div>
@@ -138,21 +138,21 @@
     <nav class="mobile-nav" id="mobileNav">
         <div class="mob-nav-item active" id="mob-dashboard" onclick="mobileNav('dashboard', this)">
             <span class="mob-icon">🏠</span>
-            <span>Tổng Quan</span>
-        </div>
-        <div class="mob-nav-item" id="mob-documents" onclick="mobileNav('qlqt', this)">
-            <span class="mob-icon">📄</span>
-            <span>Văn Bản</span>
+            <span>Trang chủ</span>
         </div>
         <div class="mob-nav-item" id="mob-questions" onclick="mobileNav('tracuu', this)">
             <span class="mob-icon">🔍</span>
             <span>Tra Cứu</span>
         </div>
-        <div class="mob-nav-item" id="mob-tests" onclick="mobileNav('qlbktr', this)">
+        <div class="mob-nav-item isADMINMobile d-none" id="mob-documents" onclick="mobileNav('qlqt', this)">
+            <span class="mob-icon">📄</span>
+            <span>Văn Bản</span>
+        </div>
+        <div class="mob-nav-item isADMINMobile d-none" id="mob-tests" onclick="mobileNav('qlbktr', this)">
             <span class="mob-icon">📝</span>
             <span>Kiểm Tra</span>
         </div>
-        <div class="mob-nav-item" id="mob-results" onclick="mobileNav('qlkqthi', this)">
+        <div class="mob-nav-item isADMINMobile d-none" id="mob-results" onclick="mobileNav('qlkqthi', this)">
             <span class="mob-icon">📊</span>
             <span>Kết Quả</span>
         </div>
@@ -179,6 +179,7 @@
                             <option value="Phác Đồ Điều Trị">Phác Đồ Điều Trị</option>
                             <option value="Quy Định">Quy Định</option>
                             <option value="Quyết Định">Quyết Định</option>
+                            <option value="Kế Hoạch">Kế Hoạch</option>
                             <option value="Hướng Dẫn">Hướng Dẫn</option>
                             <option value="Thông Báo">Thông Báo</option>
                             <option value="Báo Cáo">Báo Cáo</option>
@@ -275,6 +276,7 @@
                             <option value="Phác Đồ Điều Trị">Phác Đồ Điều Trị</option>
                             <option value="Quy Định">Quy Định</option>
                             <option value="Quyết Định">Quyết Định</option>
+                            <option value="Kế Hoạch">Kế Hoạch</option>
                             <option value="Hướng Dẫn">Hướng Dẫn</option>
                             <option value="Thông Báo">Thông Báo</option>
                             <option value="Báo Cáo">Báo Cáo</option>
@@ -991,7 +993,7 @@
 
     <script src="js/index.js"></script>
     <script src="api/dashboard_api.js"></script>
-    <script src="api/tracuu_api.js"></script>
+    <script src="api/timkiem_api.js"></script>
 
     <script src="js/qlqt.js"></script>
     <script src="api/qlqt_api.js"></script>

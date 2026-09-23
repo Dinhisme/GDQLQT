@@ -12,10 +12,110 @@ let startTime = 0;
 let reviewed = false;
 let submitted = false;
 let savingAnswer = false;
+let savingTime = false;
+let timeSaveInt = null;
+
+function getTimerStorageKey() {
+    return `baiThiTimerDeadline:${baiThi?.ketQuaLamBaiId || 'unknown'}`;
+}
+
+function getInitialTimeLeft() {
+    const storageKey = getTimerStorageKey();
+    const savedDeadline = Number(localStorage.getItem(storageKey));
+
+    if (Number.isFinite(savedDeadline) && savedDeadline > 0) {
+        return Math.max(0, Math.ceil((savedDeadline - Date.now()) / 1000));
+    }
+
+    const serverTimeLeft = Number(baiThi.thoiGianConLai);
+    const initialTimeLeft = Number.isFinite(serverTimeLeft) && serverTimeLeft >= 0
+        ? serverTimeLeft
+        : TOTAL_TIME;
+
+    localStorage.setItem(storageKey, String(Date.now() + initialTimeLeft * 1000));
+    return initialTimeLeft;
+}
+
+function getBaiKiemTraId() {
+    return baiThi?.baiKiemTraId || baiThi?.baiKiemTra?.id;
+}
+
+async function saveRemainingTime(keepalive = false) {
+    const baiKiemTraId = getBaiKiemTraId();
+
+    if (submitted || savingTime || !baiKiemTraId) return false;
+
+    const remainingTime = Math.max(0, Math.ceil(timeLeft));
+    const token = localStorage.getItem('authToken');
+
+    try {
+        savingTime = true;
+
+        const response = await fetch(
+            `/api/bai-thi/luu-thoi-gian/${baiKiemTraId}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    thoiGianConLaiRequest: remainingTime
+                }),
+                keepalive
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Không thể lưu thời gian còn lại.');
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Lỗi lưu thời gian còn lại:', error);
+        return false;
+    } finally {
+        savingTime = false;
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     loadTrangLamBai();
 });
+
+// Toast Notification Function
+function showToast(type, title, message, duration = 5000) {
+    const container = document.getElementById('toastContainer');
+
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '!',
+        info: 'ℹ'
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+                <span class="toast-icon">${icons[type]}</span>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.closest('.toast').remove()">×</button>
+                <div class="toast-progress"></div>
+            `;
+
+    container.appendChild(toast);
+
+    // Auto remove after duration
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, duration);
+}
 
 //Load dữ liệu QLND
 async function loadTrangLamBai() {
@@ -24,6 +124,7 @@ async function loadTrangLamBai() {
         const data = sessionStorage.getItem('dataBaiThi');
 
         if (!data) {
+            window.location.href = '/';
             throw new Error('Không tìm thấy dữ liệu bài thi.');
         }
 
@@ -64,7 +165,7 @@ async function loadTrangLamBai() {
 
         flagged = new Array(TOTAL).fill(false);
 
-        timeLeft = TOTAL_TIME;
+        timeLeft = getInitialTimeLeft();
         currentQ = 0;
         submitted = false;
         startTime = Date.now();
@@ -256,6 +357,7 @@ function init() {
     renderQ(0);
     updateTimerUI();
     startTimer();
+    timeSaveInt = setInterval(() => saveRemainingTime(), 15000);
 }
 /* ─────────────────────────────────────────
    TIMER
@@ -311,7 +413,19 @@ function renderQ(idx) {
 
     // Header
     document.getElementById('qNumBadge').textContent = `Câu ${idx + 1} / ${TOTAL}`;
-    document.getElementById('qTopic').textContent = q.topic;
+
+    let textTopic = '';
+    if (q.topic === 'dat') {
+        textTopic = 'Đạt/Không đạt';
+    }
+    else if (q.topic === 'dungSai') {
+        textTopic = 'Đúng/Sai';
+    }
+    else {
+        textTopic = 'Trắc nghiệm';
+    }
+
+    document.getElementById('qTopic').textContent = textTopic;
 
     const diffMap = { easy: '🟢 Dễ', medium: '⚡ Trung bình', hard: '🔴 Khó' };
     const diffClass = { easy: 'tag-easy', medium: 'tag-medium', hard: 'tag-hard' };
@@ -419,7 +533,7 @@ async function saveCurrentAnswer() {
         savingAnswer = true;
 
         const response = await fetch(
-            `/api/ket-qua/${baiThi.ketQuaLamBaiId}/tra-loi`,
+            `/api/bai-thi/${baiThi.ketQuaLamBaiId}/tra-loi`,
             {
                 method: 'PATCH',
                 headers: {
@@ -466,6 +580,8 @@ async function goTo(idx) {
     const saved = await saveCurrentAnswer();
 
     if (!saved) return;
+
+    await saveRemainingTime();
 
     renderQ(idx);
 
@@ -583,6 +699,16 @@ document.addEventListener('keydown', e => {
     if (k === 'Enter' && !submitted) openConfirm();
 });
 
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+        saveRemainingTime(true);
+    }
+});
+
+window.addEventListener('pagehide', () => {
+    saveRemainingTime(true);
+});
+
 
 /* ─────────────────────────────────────────
    CONFIRM + SUBMIT
@@ -606,6 +732,8 @@ async function submitExam() {
     if (submitted || savingAnswer) return;
 
     try {
+        await saveRemainingTime();
+
         // Lưu đáp án của câu hiện tại trước khi nộp
         const saved = await saveCurrentAnswer();
 
@@ -614,7 +742,7 @@ async function submitExam() {
         const token = localStorage.getItem('authToken');
 
         const response = await fetch(
-            `/api/ket-qua/${baiThi.ketQuaLamBaiId}/nop-bai`,
+            `/api/bai-thi/${baiThi.ketQuaLamBaiId}/nop-bai`,
             {
                 method: 'POST',
                 headers: {
@@ -635,6 +763,8 @@ async function submitExam() {
 
         submitted = true;
         clearInterval(timerInt);
+        clearInterval(timeSaveInt);
+        localStorage.removeItem(getTimerStorageKey());
         closeConfirm();
 
         document.querySelectorAll('.option').forEach(option => {

@@ -238,17 +238,22 @@ function createTrangChuKQRows(list) {
 
     if (!list || list.length === 0) {
         return `
-        <div class="text-center">
-            CHƯA CÓ KẾT QUẢ!
+        <div class="result-mini">
+            <div class="rm-score pass"></div>
+            <div class="rm-info">
+                <div class="rm-name">BẠN CHƯA CÓ KẾT QUẢ THI NÀO CẢ!</div>
+            </div>
+            <span class="badge b-yellow">Chờ chấm</span>
         </div>
     `;
     }
 
     return list.map((ketQua, index) => {
 
-        return `
+        if(ketQua.trangThai === 1) {
+            return `
             <div class="result-mini">
-                <div class="rm-score pass">✅</div>
+                <div class="rm-score yellow">⏳</div>
                 <div class="rm-info">
                     <div class="rm-name">${ketQua.tenBaiKiem}</div>
                     <div class="rm-date">${formatDateTime(ketQua.thoiGianNop)} · ${ketQua.soLuongCauLam}/${ketQua.soLuongCauHoi} câu</div>
@@ -256,7 +261,49 @@ function createTrangChuKQRows(list) {
                 <span class="badge b-yellow">Chờ chấm</span>
             </div>
         `;
+        }
 
+        if(ketQua.trangThai === 2) {
+
+            let badgeColor = '';
+            let textBadge = '';
+            let scoreBadge = '';
+
+            if(ketQua.tongDiem >= 50) {
+                badgeColor = 'green';
+                textBadge = 'Đạt';
+                scoreBadge = 'pass';
+            } else {
+                badgeColor = 'orange';
+                textBadge = 'Không đạt';
+                scoreBadge = 'fail';
+            }
+
+            return `
+            <div class="result-mini">
+                <div class="rm-score ${scoreBadge}">${ketQua.tongDiem}</div>
+                <div class="rm-info">
+                    <div class="rm-name">${ketQua.tenBaiKiem}</div>
+                    <div class="rm-date">${formatDateTime(ketQua.thoiGianNop)} · ${ketQua.soLuongCauLam}/${ketQua.soLuongCauHoi} câu</div>
+                </div>
+                
+                <span class="badge b-${badgeColor}">${textBadge}</span>
+            </div>
+        `;
+        }
+
+        if(ketQua.trangThai === 3) {
+            return `
+            <div class="result-mini">
+                <div class="rm-score fail">❌</div>
+                <div class="rm-info">
+                    <div class="rm-name">${ketQua.tenBaiKiem}</div>
+                    <div class="rm-date">${formatDateTime(ketQua.thoiGianNop)} · ${ketQua.soLuongCauLam}/${ketQua.soLuongCauHoi} câu</div>
+                </div>
+                <span class="badge b-red">Kết quả bị từ chối</span>
+            </div>
+        `;
+        }
     }).join("");
 }
 
@@ -276,7 +323,7 @@ function renderTrangChuPage(trangChu) {
 
     const stats = getTrangChuStatistics(trangChu);
 
-    const baiKiemTraRowsLeft = createTrangChuRowsLeft(trangChu.listTongBktr);
+    const baiKiemTraRowsLeft = createTrangChuRowsLeft(trangChu.listTongBktrChuaLam);
 
     const baiKiemTraRowsRight = createTrangChuRowsRight(trangChu.listTongBktr);
 
@@ -446,7 +493,7 @@ async function batDauLamBai() {
     };
 
     try {
-        const response = await fetch('/api/ket-qua/bat-dau', {
+        const response = await fetch('/api/bai-thi/bat-dau', {
             method: 'POST',
 
             headers: {
@@ -482,60 +529,3 @@ async function batDauLamBai() {
         showToast('error', 'Cảnh báo!', 'Lỗi khi gửi dữ liệu. Vui lòng thử lại!');
     }
 }
-
-// ===== AUTHENTICATION CHECK =====
-// Check if user is logged in and verify token with server
-async function checkAuthentication() {
-    const token = localStorage.getItem('authToken');
-
-    if (!token) {
-        console.warn('⚠️ No authentication token found. Redirecting to login...');
-        window.location.href = '/login';
-        return false;
-    }
-
-    try {
-        const response = await fetch('/api/verify-token', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const data = await response.json();
-
-        if (!data.success) {
-            console.error('❌ Token verification failed:', data.message);
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('user');
-            window.location.href = '/login';
-            return false;
-        }
-
-        console.log('✅ User authenticated with valid server token');
-        return true;
-
-    } catch (error) {
-        console.error('❌ Token verification error:', error);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
-        return false;
-    }
-}
-
-// Run authentication check when page loads and wait for result
-(async function () {
-    const isAuthenticated = await checkAuthentication();
-
-    const userLogin = localStorage.getItem('user');
-    const userLoginDepartment = localStorage.getItem('userDepartment');
-    document.getElementById('user-name').textContent = userLoginDepartment;
-    document.getElementById('user-name2').textContent = userLogin;
-
-    if (!isAuthenticated) {
-        // Stop execution if not authenticated
-        throw new Error('Unauthorized access');
-    }
-})();

@@ -56,6 +56,10 @@ app.get('/baithi', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'baithi.html'));
 });
 
+app.get('/ketquachitiet', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ketquachitiet.html'));
+});
+
 // API đăng nhập - Forward to Java Backend
 app.post("/auth/login", async (req, res) => {
   try {
@@ -88,10 +92,28 @@ app.post("/auth/login", async (req, res) => {
 
     if (!fetchResponse.ok) {
       console.error(`❌ Java Backend error: ${fetchResponse.status}`);
+
+      if (fetchResponse.status === 404) {
+        return res.status(404).json({
+          success: false,
+          message: "Tài khoản không tồn tại trong hệ thống!",
+          error: data.error || data.message,
+        });
+      }
+
+      if (fetchResponse.status === 401) {
+        return res.status(401).json({
+          success: false,
+          message: "Tên đăng nhập hoặc mật khẩu không chính xác!",
+          error: data.error || data.message,
+        });
+      }
+
+      // Các lỗi khác
       return res.status(fetchResponse.status).json({
         success: false,
-        message: fetchResponse.status === 401 ? 'Tên đăng nhập hoặc mật khẩu không chính xác' : 'Đăng nhập thất bại',
-        error: data.error || data.message
+        message: data.message || "Có lỗi xảy ra từ Java Backend!",
+        error: data.error,
       });
     }
 
@@ -178,7 +200,7 @@ app.get("/api/verify-token", async (req, res) => {
     }
 
     // Forward token verification to Java Backend
-    const verifyEndpoint = `${javaBackendUrl}/trang-chu`; // Use any protected endpoint to verify token
+    const verifyEndpoint = `${javaBackendUrl}/trang-chu/verify-token`; // Use any protected endpoint to verify token
     const verifyResponse = await fetch(verifyEndpoint, {
       method: "GET",
       headers: {
@@ -186,6 +208,18 @@ app.get("/api/verify-token", async (req, res) => {
         "Authorization": authHeader
       }
     });
+
+    const responseText = await verifyResponse.text();
+
+    let data = {};
+    try {
+      if (responseText) {
+        data = JSON.parse(responseText);
+      }
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError);
+      console.error("Response text:", responseText);
+    }
 
     if (!verifyResponse.ok) {
       console.error(`❌ Token verification failed: ${verifyResponse.status}`);
@@ -199,7 +233,8 @@ app.get("/api/verify-token", async (req, res) => {
     console.log('✅ Token xác thực thành công');
     return res.json({
       success: true,
-      message: 'Token hợp lệ'
+      message: "Đăng nhập thành công",
+      user: data,
     });
 
   } catch (error) {
@@ -212,8 +247,8 @@ app.get("/api/verify-token", async (req, res) => {
   }
 });
 
-//bat dau lam bai
-app.post("/api/ket-qua/bat-dau", async (req, res) => {
+//API Làm bài kiểm tra
+app.post("/api/bai-thi/bat-dau", async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -232,7 +267,7 @@ app.post("/api/ket-qua/bat-dau", async (req, res) => {
 
     console.log('📤 Gửi đến Java Backend:', formattedBody);
 
-    const resAPI = await fetch(`${javaBackendUrl}/ket-qua/bat-dau`, {
+    const resAPI = await fetch(`${javaBackendUrl}/bai-thi/bat-dau`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -266,8 +301,7 @@ app.post("/api/ket-qua/bat-dau", async (req, res) => {
   }
 });
 
-//luu tung dap an
-app.patch("/api/ket-qua/:id/tra-loi", async (req, res) => {
+app.patch("/api/bai-thi/:id/tra-loi", async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -289,7 +323,7 @@ app.patch("/api/ket-qua/:id/tra-loi", async (req, res) => {
 
     console.log('📤 Gửi đến Java Backend:', formattedBody);
 
-    const resAPI = await fetch(`${javaBackendUrl}/ket-qua/${id}/tra-loi`, {
+    const resAPI = await fetch(`${javaBackendUrl}/bai-thi/${id}/tra-loi`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -321,8 +355,7 @@ app.patch("/api/ket-qua/:id/tra-loi", async (req, res) => {
   }
 });
 
-//nop bai kiem tra
-app.post("/api/ket-qua/:id/nop-bai", async (req, res) => {
+app.post("/api/bai-thi/:id/nop-bai", async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -335,7 +368,7 @@ app.post("/api/ket-qua/:id/nop-bai", async (req, res) => {
 
     const { id } = req.params;
 
-    const resAPI = await fetch(`${javaBackendUrl}/ket-qua/${id}/nop-bai`, {
+    const resAPI = await fetch(`${javaBackendUrl}/bai-thi/${id}/nop-bai`, {
       method: "POST",
       headers: {
         'Authorization': authHeader
@@ -366,8 +399,60 @@ app.post("/api/ket-qua/:id/nop-bai", async (req, res) => {
   }
 });
 
-//API Quản lý văn bản
-app.get("/api/quy-trinh", async (req, res) => {
+app.patch("/api/bai-thi/luu-thoi-gian/:id", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+    const { thoiGianConLaiRequest } = req.body;
+
+    const formattedBody = {
+      thoiGianConLaiRequest
+    };
+
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+
+    const resAPI = await fetch(`${javaBackendUrl}/bai-thi/luu-thoi-gian/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    if (!resAPI.ok) {
+      const errorText = await resAPI.text();
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: errorText || "Không thể lưu thời gian"
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Lưu thời gian thành công!"
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+//API Tìm kiếm 
+app.get("/api/tim-kiem/quy-trinh", async (req, res) => {
   try {
 
     const authHeader = req.headers.authorization;
@@ -379,7 +464,7 @@ app.get("/api/quy-trinh", async (req, res) => {
       });
     }
 
-    const resAPI = await fetch(`${javaBackendUrl}/quy-trinh`, {
+    const resAPI = await fetch(`${javaBackendUrl}/tim-kiem/quy-trinh`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -419,6 +504,7 @@ app.get("/api/quy-trinh", async (req, res) => {
   }
 });
 
+//API Quản lý văn bản
 app.get("/api/quy-trinh/khoa-phong", async (req, res) => {
   try {
 
@@ -1344,6 +1430,243 @@ app.get("/api/ket-qua", async (req, res) => {
   }
 });
 
+app.get("/api/ket-qua/:id", async (req, res) => {
+  try {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const resAPI = await fetch(`${javaBackendUrl}/ket-qua/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      }
+    });
+
+    if (!resAPI.ok) {
+      console.error(`❌ Java Backend error: ${resAPI.status}`);
+      return res.status(resAPI.status).json({
+        success: false,
+        message: resAPI.message,
+        error: await resAPI.text()
+      });
+    }
+
+    const javaResponse = await resAPI.json();
+
+    const detailResult = Array.isArray(javaResponse)
+      ? javaResponse[0]
+      : (javaResponse.data && Array.isArray(javaResponse.data))
+        ? javaResponse.data[0]
+        : (javaResponse.data || javaResponse);
+
+    return res.json({
+      success: true,
+      message: "Lấy kết quả bài kiểm tra thành công!",
+      data: detailResult
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.patch("/api/ket-qua/:id/duyet", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const resAPI = await fetch(`${javaBackendUrl}/ket-qua/${id}/duyet`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      }
+    });
+
+    if (!resAPI.ok) {
+      const errorText = await resAPI.text();
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: errorText || "Không thể duyệt kết quả"
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Duyệt kết quả thành công!"
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.patch("/api/ket-qua/:id/chinh-sua-diem", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const { diemMoi } = req.body;
+
+    const formattedBody = {
+      diemMoi
+    };
+    console.log('📤 Gửi đến Java Backend:', formattedBody);
+    const resAPI = await fetch(`${javaBackendUrl}/ket-qua/${id}/chinh-sua-diem`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      },
+      body: JSON.stringify(formattedBody)
+    });
+
+    if (!resAPI.ok) {
+      const errorText = await resAPI.text();
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: errorText || "Không thể chỉnh sửa điểm"
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Chỉnh sửa điểm thành công!"
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.patch("/api/ket-qua/:id/tu-choi", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const resAPI = await fetch(`${javaBackendUrl}/ket-qua/${id}/tu-choi`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      }
+    });
+
+    if (!resAPI.ok) {
+      const errorText = await resAPI.text();
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: errorText || "Không thể từ chối kết quả"
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Từ chối kết quả thành công!"
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
+app.patch("/api/ket-qua/:id/mo-lai", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+
+    const { id } = req.params;
+
+    const resAPI = await fetch(`${javaBackendUrl}/ket-qua/${id}/mo-lai`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': authHeader
+      }
+    });
+
+    if (!resAPI.ok) {
+      const errorText = await resAPI.text();
+
+      return res.status(resAPI.status).json({
+        success: false,
+        message: errorText || "Không thể mở lại kết quả"
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Mở lại kết quả thành công!"
+    });
+
+  } catch (e) {
+    console.error("❌ NodeJS Error:", e);
+    return res.status(500).json({
+      success: false,
+      message: 'Lỗi NodeJS: ' + e.message
+    });
+  }
+});
+
 //API Người dùng
 app.get("/api/nguoi-dung", async (req, res) => {
   try {
@@ -1766,5 +2089,5 @@ app.delete("/api/khoa-phong/:id", async (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
-  console.log(`📊 Admin dashboard: http://localhost:${PORT}/admin`);
+  // console.log(`📊 Admin dashboard: http://localhost:${PORT}/admin`);
 });

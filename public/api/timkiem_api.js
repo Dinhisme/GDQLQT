@@ -1,21 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const addDocForm = document.getElementById('addDocForm');
-    if (addDocForm) {
-        addDocForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            submitQuyTrinhForm();
-        });
-    }
-
-    const updateDocForm = document.getElementById('updateDocForm');
-    if (updateDocForm) {
-        updateDocForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            updateQuyTrinh();
-        });
-    }
-
-});
 
 /* ── DOC SEARCH & FILTER ── */
 let currentView = 'grid';
@@ -28,13 +10,16 @@ function quickSearch(term) {
 function filterDocs() {
     const q = (document.getElementById('docSearchInput')?.value || '').toLowerCase();
     const l = document.getElementById('filterLoai')?.value || '';
-    const p = document.getElementById('filterPhong')?.value || '';
+    let p = document.getElementById('filterPhong')?.value || '';
     const tt = document.getElementById('filterTT')?.value || '';
+
+    if(p === 'TẤT CẢ KHOA/PHÒNG/TT') p = '';
 
     const cards = document.querySelectorAll('#docGrid .doc-card');
     let count = 0;
     cards.forEach(card => {
-        const name = card.dataset.name.toLowerCase();
+        const name = card.dataset.so.toLowerCase() + ' ' + card.dataset.name.toLowerCase();
+
         const loai = card.dataset.loai;
         const phong = card.dataset.phong;
         const ttVal = card.dataset.tt;
@@ -43,6 +28,7 @@ function filterDocs() {
             (!l || loai === l) &&
             (!p || phong === p) &&
             (!tt || ttVal === tt);
+
         card.style.display = show ? '' : 'none';
         if (show) count++;
     });
@@ -52,7 +38,7 @@ function filterDocs() {
     document.getElementById('docEmpty').style.display = count === 0 ? 'block' : 'none';
 }
 
-//Load dữ liệu Tim kim
+//Load dữ liệu Tim kiem
 async function loadTimKiemPage() {
     try {
         const quytrinhList = await fetchAllQuyTrinh();
@@ -81,7 +67,7 @@ async function loadTimKiemPage() {
 async function fetchAllQuyTrinh() {
     const token = localStorage.getItem("authToken");
 
-    const response = await fetch("/api/quy-trinh", {
+    const response = await fetch("/api/tim-kiem/quy-trinh", {
         headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
@@ -148,7 +134,7 @@ function createDocCard(list) {
         const badge = quytrinh.trangThai === 1 ? "green" : "red";
 
         return `
-            <div class="doc-card" data-name="${quytrinh.tenQuyTrinh}" data-loai="${quytrinh.loaiQuyTrinh}" data-phong="${quytrinh.tenKhoaPhong}" data-tt="${quytrinh.trangThai === 1 ? "Hiệu lực" : "Hết hiệu lực"}" >
+            <div class="doc-card" data-so="${quytrinh.so}" data-name="${quytrinh.tenQuyTrinh}" data-loai="${quytrinh.loaiQuyTrinh}" data-phong="${quytrinh.tenKhoaPhong}" data-tt="${quytrinh.trangThai === 1 ? "Hiệu lực" : "Hết hiệu lực"}" >
                 <div class="doc-card-head">
                     <div class="doc-file-icon fi-pdf"><span class="fi-ext red">${quytrinh.so}</span></div>
                     <div class="doc-card-meta">
@@ -223,7 +209,7 @@ function renderTimKiemPage(quytrinhList, khoaPhongList) {
                     </select>
 
                     <select onchange="filterDocs()" id="filterPhong">
-                        <option value="">Tất cả Khoa/Phòng/TT</option>
+     
                         ${khoaPhongList.map(kp => `<option value="${kp.ten}">${kp.ten}</option>`).join("")}
                     </select>
                     <select onchange="filterDocs()" id="filterTT">

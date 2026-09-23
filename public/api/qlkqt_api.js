@@ -1,4 +1,5 @@
 let currentKetQuaList = [];
+let ketQuaDataTable = null;
 const DIEM_DAT = 70;
 
 // Khởi tạo trang
@@ -94,15 +95,6 @@ function formatThoiGianLam(item) {
 }
 
 function createKetQuaRows(list) {
-    if (!list.length) {
-        return `
-            <tr>
-                <td colspan="9" style="text-align:center;padding:30px;">
-                    Chưa có dữ liệu kết quả thi
-                </td>
-            </tr>
-        `;
-    }
 
     return list.map((item, index) => {
         const chiTiets = item.ketQuaChiTiets || [];
@@ -114,6 +106,23 @@ function createKetQuaRows(list) {
 
         const tenNguoiThi = item.tenNguoiThi || 'Chưa cập nhật';
         const tenBaiKiemTra = item.tenBaiKiemTra || 'Chưa cập nhật';
+
+        let statusText = '';
+        let statusClass = '';
+
+        if (item.trangThai === 0) {
+            statusText = '❌ Chưa nộp';
+            statusClass = 'badge b-red';
+        } else if (item.trangThai === 1) {
+            statusText = '⏳ Đang chờ duyệt';
+            statusClass = 'badge b-yellow';
+        } else if (item.trangThai === 2) {
+            statusText = '✅ Đã duyệt';
+            statusClass = 'badge b-green';
+        } else if (item.trangThai === 3) {
+            statusText = '❌ Đã từ chối';
+            statusClass = 'badge b-red';
+        }
 
         return `
             <tr>
@@ -162,6 +171,10 @@ function createKetQuaRows(list) {
                     ? '<span class="badge b-green">✅ Đạt</span>'
                     : '<span class="badge b-red">❌ Không đạt</span>'
             }
+                </td>
+
+                <td class="text-center">
+                    <span class="${statusClass}" id="heroTag">${statusText}</span>
                 </td>
 
                 <td class="text-center">
@@ -260,6 +273,7 @@ function renderQLKQPage(list) {
                         <th>Tiến độ đạt</th>
                         <th class="text-center">Ngày thi</th>
                         <th class="text-center">Kết quả</th>
+                        <th class="text-center">Trạng thái</th>
                         <th class="text-center">Thao tác</th>
                     </tr>
                 </thead>
@@ -275,7 +289,7 @@ function renderQLKQPage(list) {
 
 //Khởi tạo Datatable
 function initKetQuaTable() {
-    $('#tbl-results').DataTable($.extend(true, {}, dtDefaults, {}));
+    ketQuaDataTable = $('#tbl-results').DataTable($.extend(true, {}, dtDefaults, {}));
 }
 
 function filterKetQua() {
@@ -304,8 +318,13 @@ function filterKetQua() {
         return matchKeyword && matchBaiThi && matchTrangThai;
     });
 
-    document.getElementById('ketQuaTableBody').innerHTML =
-        createKetQuaRows(filtered);
+    if (ketQuaDataTable) {
+        ketQuaDataTable.destroy();
+        ketQuaDataTable = null;
+    }
+
+    document.getElementById('ketQuaTableBody').innerHTML = createKetQuaRows(filtered);
+    initKetQuaTable();
 }
 
 function xemChiTietKetQua(id) {
@@ -313,6 +332,5 @@ function xemChiTietKetQua(id) {
 
     if (!ketQua) return;
 
-    console.log('Chi tiết kết quả:', ketQua);
-    alert(`Mã kết quả: ${ketQua.id}\nĐiểm: ${ketQua.tongDiem || 0}`);
+    window.location.href = `/ketquachitiet?id=${encodeURIComponent(id)}`;
 }

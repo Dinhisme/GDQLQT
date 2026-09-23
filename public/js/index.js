@@ -23,6 +23,7 @@ function navigate(page, el) {
     el.classList.add('active');
 
     const info = pageMap[page];
+
     document.getElementById('pageTitle').textContent = info.title;
     document.getElementById('breadcrumb').textContent = info.sub;
     // sync mobile nav
@@ -32,6 +33,7 @@ function navigate(page, el) {
     if (window.innerWidth <= 768) closeSidebar();
 
     loadPage(page);
+
 }
 
 function mobileNav(page, el) {
@@ -40,6 +42,9 @@ function mobileNav(page, el) {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     el.classList.add('active');
     const info = pageMap[page];
+
+    loadPage(page);
+
     document.getElementById('pageTitle').textContent = info.title;
     document.getElementById('breadcrumb').textContent = info.sub;
     // sync sidebar highlight
@@ -52,7 +57,7 @@ function mobileNav(page, el) {
     document.querySelector('.content').scrollTop = 0;
     window.scrollTo(0, 0);
 
-    loadPage(page);
+
 }
 
 function toggleSidebar() {
@@ -98,14 +103,94 @@ function showToast(type, title, message, duration = 3000) {
     }, duration);
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const role = localStorage.getItem('role');
-    if(role ==='ADMIN'){
+// ===== AUTHENTICATION CHECK =====
+// Check if user is logged in and verify token with server
+async function checkAuthentication() {
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+        console.warn('⚠️ No authentication token found. Redirecting to login...');
+        window.location.href = '/login';
+        return false;
+    }
+
+    try {
+        const response = await fetch('/api/verify-token', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            console.error('❌ Token verification failed:', data.message);
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            localStorage.removeItem('role');
+            localStorage.removeItem('userDepartment');
+            window.location.href = '/login';
+            return false;
+        }
+
+        // console.log('✅ User authenticated with valid server token', data);
+
+        localStorage.setItem('user', data.user.hoTen);
+        localStorage.setItem('role', data.user.role);
+        localStorage.setItem('userDepartment', data.user.khoaPhong);
+
+        return true;
+
+    } catch (error) {
+        console.error('❌ Token verification error:', error);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        localStorage.removeItem('role');
+        localStorage.removeItem('userDepartment');
+        window.location.href = '/login';
+        return false;
+    }
+}
+
+// Run authentication check when page loads and wait for result
+(async function () {
+    const isAuthenticated = await checkAuthentication();
+
+    console.log('Authentication check result:', isAuthenticated);
+
+    const userLogin = localStorage.getItem('user');
+    const userLoginDepartment = localStorage.getItem('userDepartment');
+    const userRole = localStorage.getItem('role');
+
+    document.getElementById('user-name').textContent = userLoginDepartment;
+    document.getElementById('user-name2').textContent = userLogin;
+
+    document.getElementById('user-role').textContent = 'Người dùng';
+
+    if (userRole === 'ADMIN') {
         document.getElementById('isADMIN').classList.remove('d-none');
+        document.querySelectorAll('.isADMINMobile').forEach(el => el.classList.remove('d-none'));
+        document.getElementById('user-role').textContent = 'Quản trị viên';
+    }
+
+    const requestedPage = new URLSearchParams(window.location.search).get('page');
+    if (requestedPage && pageMap[requestedPage]) {
+        const navItem = [...document.querySelectorAll('.nav-item')].find(item =>
+            item.getAttribute('onclick')?.includes(`'${requestedPage}'`)
+        );
+        navigate(requestedPage, navItem || document.body);
+        return;
     }
 
     loadDashboardPage();
-});
+
+    if (!isAuthenticated) {
+        // Stop execution if not authenticated
+        throw new Error('Unauthorized access');
+    }
+})();
 
 function loadPage(page) {
     switch (page) {
@@ -140,5 +225,7 @@ function loadPage(page) {
 function logout() {
     localStorage.removeItem('user');
     localStorage.removeItem('authToken');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userDepartment');
     window.location.href = '/login';
 }

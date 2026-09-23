@@ -125,8 +125,8 @@ function createBaiKiemTraRows(list) {
                 : 'Không có'}
                 </td>
                 <td class="text-center">${baiKiemTra.tongSoLuotThi}</td>
-                <td class="text-center">${baiKiemTra.diemTrungBinh}</td>
-                <td class="text-center"><span class="badge badge-${badgeTrangThaiTiLeDat}">${baiKiemTra.tiLeDat}%</span></td>
+                <td class="text-center">${baiKiemTra.diemTrungBinh.toFixed(2)}</td>
+                <td class="text-center"><span class="badge badge-${badgeTrangThaiTiLeDat}">${baiKiemTra.tiLeDat.toFixed(2)}%</span></td>
                 <td class="text-center"><span class="badge badge-blue">${baiKiemTra.thoiGianLamBai}</span></td>
                 <td class="text-center">${formatDateTime(baiKiemTra.thoiGianBatDau)}</td>
                 <td class="text-center">${formatDateTime(baiKiemTra.thoiGianKetThuc)}</td>
@@ -168,7 +168,7 @@ function createBaiKiemTraCards(list) {
                     <div class="test-meta-item">🏷️ <span>${baiKiemTra.id}</span></div>
                     <div class="test-meta-item">❓ <span>${baiKiemTra.tongSoCauHoi} câu</span></div>
                     <div class="test-meta-item">⏱ <span>${baiKiemTra.thoiGianLamBai}p</span></div>
-                    <div class="test-meta-item">🎯 <span>${baiKiemTra.diemTrungBinh}</span></div>
+                    <div class="test-meta-item">🎯 <span>${baiKiemTra.diemTrungBinh.toFixed(2)}</span></div>
                     <div class="test-meta-item">🔀 <span>${baiKiemTra.tronCauHoi === 1 ? 'Có' : 'Không'}</span></div>
                 </div>
                 <div class="progress-bar">
@@ -204,7 +204,9 @@ async function renderBaiKiemTraPage(baiKiemTraList) {
                 <div>
 
                 </div>
-                <button class="btn btn-primary" onclick="openModal('addTestModal')">+ Tạo Bài Kiểm Tra</button>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <button class="btn btn-primary" onclick="openModal('addTestModal')">+ Tạo Bài Kiểm Tra</button>
+                </div>
             </div>
 
             <div class="filter-tabs">
@@ -217,32 +219,33 @@ async function renderBaiKiemTraPage(baiKiemTraList) {
             <div class="test-grid" id="testsList">
                 ${cardRows}
             </div>
-        </div>
 
-        <!-- DETAIL TABLE -->
-
-        <div class="table-card" style="margin-top:30px;">
-            <table id="tbl-tests" class="display stripe" style="width:100%">
-                <thead>
-                    <tr>
-                        <th class="text-center">STT</th>
-                        <th>Tên Bài Kiểm Tra</th>
-                        <th>Mô tả</th>
-                        <th>Khoa/Phòng/TT</th>
-                        <th>Văn bản</th>
-                        <th class="text-center">Lượt Thi</th>
-                        <th class="text-center">Điểm TB</th>
-                        <th class="text-center">Tỉ Lệ Đạt</th>
-                        <th class="text-center">Thời Gian</th>
-                        <th class="text-center">Thời Gian Bắt Đầu</th>
-                        <th class="text-center">Thời Gian Kết Thúc</th>
-                        <th class="text-center">Trạng Thái</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${tableRows}
-                </tbody>
-            </table>
+            <!-- DETAIL TABLE -->
+            <div class="table-card" style="margin-top:30px;">
+                <div class="table-wrap">
+                    <table id="tbl-tests" class="display stripe" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th class="text-center">STT</th>
+                                <th>Tên Bài Kiểm Tra</th>
+                                <th>Mô tả</th>
+                                <th>Khoa/Phòng/TT</th>
+                                <th>Văn bản</th>
+                                <th class="text-center">Lượt Thi</th>
+                                <th class="text-center">Điểm TB</th>
+                                <th class="text-center">Tỉ Lệ Đạt</th>
+                                <th class="text-center">Thời Gian</th>
+                                <th class="text-center">Bắt Đầu</th>
+                                <th class="text-center">Kết Thúc</th>
+                                <th class="text-center">Trạng Thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     `;
     initBaiKiemTraTable();

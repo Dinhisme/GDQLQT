@@ -242,7 +242,7 @@ function updateAddQuestionButton() {
 
     const quyTrinhId = $("#quyTrinhSelect").val();
     const btn = document.getElementById("btnAddQuestion");
-    
+
     const btnImport = document.getElementById("btnImportExcel");
 
     if (quyTrinhId === "all") {
@@ -743,7 +743,10 @@ async function confirmSaoChepCauHoi() {
         );
 
         // Load lại danh sách
-        await loadQLCHPage();
+        window.currentCauHoiList = await fetchCauHoi();
+        await filterCauHoiTheoQuyTrinh(document.getElementById('quyTrinhSelect').value);
+        const type = document.querySelector('.filter-tab.active').dataset.type;
+        await filterTabCauHoi(type);
 
     } catch (error) {
 

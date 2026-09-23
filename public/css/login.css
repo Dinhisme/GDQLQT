@@ -693,11 +693,12 @@ form {
 
 .logo-form {
     width: 100px;
+    height: 100%;
     background: white;
     border-radius: 100%;
     display: flex;
     justify-content: center;
-    font-size: 80px;
+    /* font-size: 80px; */
     font-weight: bold;
     color: #667eea;
     box-shadow: 0 10px 30px rgba(41, 76, 151, 0.3);
